@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.fcmmm.github.io/posts/5e339248.html</loc>
+    
+    <lastmod>2025-04-10</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.fcmmm.github.io/link/index.html</loc>
     
     <lastmod>2025-04-09</lastmod>
@@ -211,10 +220,24 @@
     <priority>0.2</priority>
   </url>
   
+  <url>
+    <loc>https://www.fcmmm.github.io/tags/Typora%E5%BF%AB%E6%8D%B7%E9%94%AE/</loc>
+    <lastmod>2025-04-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
   
   <url>
     <loc>https://www.fcmmm.github.io/categories/%E6%BC%94%E7%A4%BA/</loc>
+    <lastmod>2025-04-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.fcmmm.github.io/categories/%E8%AE%B0%E5%BD%95/</loc>
     <lastmod>2025-04-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

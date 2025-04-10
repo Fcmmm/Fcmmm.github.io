@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Typora快捷键</title>
+      <link href="/posts/5e339248.html"/>
+      <url>/posts/5e339248.html</url>
+      
+        <content type="html"><![CDATA[<h4 id="格式"><a href="#格式" class="headerlink" title="格式"></a>格式</h4><div class="table-container"><table><thead><tr><th>功能</th><th>热键 (Windows/Linux)</th><th>热键 (macOS)</th></tr></thead><tbody><tr><td>加粗</td><td>Ctrl + B</td><td>Command + B</td></tr><tr><td>倾斜</td><td>Ctrl + I</td><td>Command + I</td></tr><tr><td>下划线</td><td>Ctrl + U</td><td>Command + U</td></tr><tr><td>代码</td><td>Ctrl + Shift + `</td><td>Command + Shift + `</td><td></td></tr><tr><td>删除线</td><td>Alt + Shift + 5</td><td>Control + Shift + `</td></tr><tr><td>超链接</td><td>Ctrl + K</td><td>Command + K</td></tr><tr><td>图像</td><td>Ctrl + Shift + I</td><td>Command + Control + I</td></tr><tr><td>清除格式</td><td>Ctrl + \</td><td>Command + \</td></tr></tbody></table></div><h4 id="段落"><a href="#段落" class="headerlink" title="段落"></a>段落</h4><div class="table-container"><table><thead><tr><th>功能</th><th>热键 (Windows/Linux)</th><th>热键 (macOS)</th></tr></thead><tbody><tr><td>标题 1 到 6</td><td>Ctrl + 1/2/3/4/5/6</td><td>Command + 1/2/3/4/5/6</td></tr><tr><td>段落</td><td>Ctrl + 0</td><td>Command + 0</td></tr><tr><td>增加标题级别</td><td>Ctrl + =</td><td>Command + =</td></tr><tr><td>降低标题级别</td><td>Ctrl + -</td><td>Command + -</td></tr><tr><td>表格</td><td>Ctrl + T</td><td>Command + Option + T</td></tr><tr><td>代码块</td><td>Ctrl + Shift + K</td><td>Command + Option + C</td></tr><tr><td>数学块</td><td>Ctrl + Shift + M</td><td>Command + Option + B</td></tr><tr><td>引用</td><td>Ctrl + Shift + Q</td><td>Command + Option + Q</td></tr><tr><td>有序列表</td><td>Ctrl + Shift + [</td><td>Command + Option + O</td></tr><tr><td>无序列表</td><td>Ctrl + Shift + ]</td><td>Command + Option + U</td></tr><tr><td>缩进</td><td>Ctrl + [ / Tab</td><td>Command + [ / Tab</td></tr><tr><td>减少缩进</td><td>Ctrl + ] / Shift + Tab</td><td>Command + ] / Shift + Tab</td></tr></tbody></table></div><h4 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h4><div class="table-container"><table><thead><tr><th>功能</th><th>热键 (Windows/Linux)</th><th>热键 (macOS)</th></tr></thead><tbody><tr><td>切换侧边栏</td><td>Ctrl + Shift + L</td><td>Command + Shift + L</td></tr><tr><td>大纲</td><td>Ctrl + Shift + 1</td><td>Command + Control + 1</td></tr><tr><td>文章</td><td>Ctrl + Shift + 2</td><td>Command + Control + 2</td></tr><tr><td>文件树</td><td>Ctrl + Shift + 3</td><td>Command + Control + 3</td></tr><tr><td>源代码模式</td><td>Ctrl + /</td><td>Command + /</td></tr><tr><td>对焦模式</td><td>F8</td><td>F8</td></tr><tr><td>打字机模式</td><td>F9</td><td>F9</td></tr><tr><td>切换器全屏</td><td>F11</td><td>Command + Option + F</td></tr><tr><td>真实大小</td><td>Ctrl + Shift + 0</td><td><em>（不支持）</em></td></tr><tr><td>放大</td><td>Ctrl + Shift + =</td><td><em>（不支持）</em></td></tr><tr><td>缩小</td><td>Ctrl + Shift + -</td><td><em>（不支持）</em></td></tr></tbody></table></div>]]></content>
+      
+      
+      <categories>
+          
+          <category> 记录 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Typora快捷键 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>免费图床推荐</title>
       <link href="/posts/3d62a639.html"/>
       <url>/posts/3d62a639.html</url>
