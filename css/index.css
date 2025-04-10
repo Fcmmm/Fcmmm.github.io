@@ -8350,7 +8350,7 @@ li.categoryBar-list-item {
 /* 滚动条，我设置的不隐藏，为了可以到达任何地方 */
 /* body::-webkit-scrollbar {
     width: 0;
-} */
+}  */
 
 .neko {
   width: 64px;
