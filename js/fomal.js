@@ -759,14 +759,13 @@ if (document.body.clientWidth > 992) {
 
   $(document).ready(function () {
     //部分自定义
-    $("#myscoll").nekoScroll({
-      bgcolor: 'rgb(0 0 0 / .5)', //背景颜色，没有绳子背景图片时有效
-      borderRadius: '2em',
-      zoom: 0.9
-    }
-    );
+    // $("#myscoll").nekoScroll({
+    //   bgcolor: 'rgb(0 0 0 / .5)', //背景颜色，没有绳子背景图片时有效
+    //   borderRadius: '2em',
+    //   zoom: 0.9
+    // }
+    // );
     //自定义（去掉以下注释，并注释掉其他的查看效果）
-    /*
     $("#myscoll").nekoScroll({
         nekoname:'neko1', //nekoname，相当于id
         nekoImg:'img/猫咪.png', //neko的背景图片
@@ -782,7 +781,6 @@ if (document.body.clientWidth > 992) {
         z_index:100, //不用解释了吧
         during:1200, //从顶部到底部滑动的时长
     });
-    */
   })
 }
 
