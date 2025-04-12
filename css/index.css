@@ -7901,7 +7901,6 @@ a:hover {
   border-radius: 12px;
   background-clip: content-box;
   display: inline-block;
-  -webkit-appearance: none;
   user-select: none;
   outline: none;
   transform: translateY(5px);
@@ -7996,7 +7995,6 @@ div#rightside {
 /* 透明度和模糊半径滑块 */
 input[type="range"] {
   display: block;
-  -webkit-appearance: none;
   background-color: #bdc3c7;
   width: 100%;
   height: 5px;
@@ -8447,11 +8445,11 @@ li.categoryBar-list-item {
 }
 
 /* 电子钟字体调节 */
-/* .card-clock-location,
+.card-clock-location,
 .card-clock-windDir,
 span.card-clock-weather {
   font-family: var(--global-font) !important;
-} */
+}
 
 /* 二级菜单圆角 */
 #nav .menus_items .menus_item .menus_item_child,
