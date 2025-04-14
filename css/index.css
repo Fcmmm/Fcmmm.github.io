@@ -7184,19 +7184,23 @@ h6::before {
 }
 
 /* 阅读百分比 */
+
 /* 返回顶部 */
+
 button#go-up #percent {
   display: none;
   font-weight: bold;
   font-size: 15px !important;
 }
 
-button#go-up span {
-  font-size: 12px !important;
+button#go-up span:nth-child(2) {
+  font-size: 12px!important;
   margin-right: -1px;
 }
 
+
 /* 鼠标滑动到按钮上时显示返回顶部图标 */
+
 button#go-up:hover i {
   display: block !important;
 }
@@ -7204,6 +7208,7 @@ button#go-up:hover i {
 button#go-up:hover #percent {
   display: none !important;
 }
+
 
 #rightside > div > a,
 #rightside > div > button {
