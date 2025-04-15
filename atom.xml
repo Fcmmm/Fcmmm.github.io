@@ -6,7 +6,7 @@
   <link href="https://www.fcmmm.top/atom.xml" rel="self"/>
   
   <link href="https://www.fcmmm.top/"/>
-  <updated>2025-04-15T09:27:11.236Z</updated>
+  <updated>2025-04-15T09:27:22.138Z</updated>
   <id>https://www.fcmmm.top/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://www.fcmmm.top/posts/e122f13e.html"/>
     <id>https://www.fcmmm.top/posts/e122f13e.html</id>
     <published>2025-04-15T09:10:09.000Z</published>
-    <updated>2025-04-15T09:27:11.236Z</updated>
+    <updated>2025-04-15T09:27:22.138Z</updated>
     
     <content type="html"><![CDATA[<h2 id="博客搭建进展">博客搭建进展</h2><p>本博客魔改自[<a href="https://www.fomal.cc"> Fomalhaut🥝</a>]，中间bug不断，现在右边的猫咪还不能正常显示（有时间再搞吧），另外一些静态资源（图片，字体等）还没有上传到服务器端，网页访问时也比较卡，手机端访问时还没有背景图片…主要因为没接触过hexo，以及vercel和github都是第一次部署，域名也是第一次申请，权当是兴趣使然吧，上周一直改这个东西了，实现一个效果还不断伴随着新的bug出现（令人头大），昨天下午<strong>被导师小批</strong>，让我写的<em>实验计划还没写</em>o(╥﹏╥)o，目前的博客就当一个基础的日志用吧，后续再不断完善OvO…</p><h3 id="待完善：">待完善：</h3><ol><li>猫咪，参考教程<a href="https://www.fomal.cc/posts/5389e93f.html">博客魔改教程总结(二) | Fomalhaut🥝</a></li><li>静态资源部署</li><li>手机端背景</li><li>地理位置<a href="https://www.fomal.cc/posts/d739261b.html">博客魔改教程总结(五) | Fomalhaut🥝</a></li></ol>]]></content>
     
