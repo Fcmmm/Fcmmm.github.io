@@ -1,5 +1,6 @@
 /* root伪类指定全局颜色 */
 :root {
+  --ichika-color: #49A6E9;
   --anzhiyu-theme-op: #4259ef23;
   --anzhiyu-card-bg-none: rgba(255, 255, 255, 0);
   --anzhiyu-main-op-deep: var(--anzhiyu-theme-op-deep) !important;
@@ -191,6 +192,13 @@ h1.post-title {
   width: 1.19em;
   height: 1.5em;
 }
+
+
+:root {
+  --ichika-color: #49A6E9;
+}
+
+
 
 /* 滚动显示的标题居中 */
 center#name-container {

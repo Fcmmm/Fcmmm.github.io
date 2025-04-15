@@ -898,8 +898,10 @@ function getDistance(e1, n1, e2, n2) {
 }
 
 function showWelcome() {
+  
   console.log("欢迎信息");
   console.log(ipLoacation.result.location.lng+" " + ipLocation.result.location.lat);
+  if (!document.getElementById("welcome-info")) return
   let dist = getDistance(120.120544,36.001794999999994, ipLocation.result.location.lng, ipLocation.result.location.lat); //这里换成自己的经纬度
   let pos = ipLocation.result.ad_info.nation;
   let ip;
@@ -1083,13 +1085,8 @@ function showWelcome() {
   else if (date.getHours() >= 19 && date.getHours() < 24) timeChange = "<span>晚上好</span>，夜生活嗨起来！";
   else timeChange = "夜深了，早点休息，少熬夜。";
 
-  try {
-    //自定义文本和需要放的位置
-    document.getElementById("welcome-info").innerHTML =
-      `<b><center>🎉 欢迎信息 🎉</center>&emsp;&emsp;欢迎来自 <span style="color:var(--theme-color)">${pos}</span> 的小伙伴，${timeChange}您现在距离站长约 <span style="color:var(--theme-color)">${dist}</span> 公里，当前的IP地址为： <span style="color:var(--theme-color)">${ip}</span>， ${posdesc}</b>`;
-  } catch (err) {
-    console.log("Pjax无法获取#welcome-info元素🙄🙄🙄")
-  }
+  document.getElementById("welcome-info").innerHTML = `欢迎来自<span>${pos}</span>的小伙伴，${timeChange}<br>你距离ichika约有<span>${dist}</span>公里，${posdesc}`;
+
 }
 // window.onload = showWelcome;
 // 如果使用了pjax在加上下面这行代码
