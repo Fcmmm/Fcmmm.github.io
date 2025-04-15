@@ -198,6 +198,26 @@ h1.post-title {
   --ichika-color: #49A6E9;
 }
 
+:root {
+  --ichika-color: #49A6E9;
+}
+
+/* 公告&欢迎页 */
+.card-announcement {
+  line-height:30px;
+  font-size:16px;
+}
+
+.card-announcement .item-headline span{
+  margin-left:0!important;
+}
+
+.card-announcement span{
+  font-weight:bold;
+  font-size:20px!important;
+  color:var(--ichika-color);
+}
+
 
 
 /* 滚动显示的标题居中 */
@@ -2389,7 +2409,6 @@ span.card-clock-weather {
   background: linear-gradient(45deg, #b9f4f3, #e3fbf9);
   border-radius: 18px;
   padding: 8px 8px;
-  height: 5px;
 }
 [data-theme="dark"] #welcome-info {
   background: #212121;

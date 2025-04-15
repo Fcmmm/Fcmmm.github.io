@@ -869,16 +869,19 @@ function changeMouseMode() {
 
 /* 欢迎信息 start */
 //get请求
+var ipLocation;
 $.ajax({
   type: 'get',
   url: 'https://apis.map.qq.com/ws/location/v1/ip',
   data: {
-    key: 'UXDBZ-TWJ6N-YNCFW-SZ3Q3-JMLZT-NLB6Q',  // 这里要写你的KEY!!!
+    key: '6WMBZ-EFWKJ-BZVFR-XS6YN-HVD6E-KFFBE',  // 这里要写你的KEY!!!
     output: 'jsonp',
   },
   dataType: 'jsonp',
   success: function (res) {
     ipLocation = res;
+    console.log(ipLocation);
+    showWelcome();
   }
 })
 function getDistance(e1, n1, e2, n2) {
@@ -899,15 +902,13 @@ function getDistance(e1, n1, e2, n2) {
 
 function showWelcome() {
   
-  console.log("欢迎信息");
-  console.log(ipLoacation.result.location.lng+" " + ipLocation.result.location.lat);
   if (!document.getElementById("welcome-info")) return
   let dist = getDistance(120.120544,36.001794999999994, ipLocation.result.location.lng, ipLocation.result.location.lat); //这里换成自己的经纬度
   let pos = ipLocation.result.ad_info.nation;
   let ip;
   let posdesc;
   //根据国家、省份、城市信息自定义欢迎语
-  switch (ipLoacation.result.ad_info.nation) {
+  switch (ipLocation.result.ad_info.nation) {
     case "日本":
       posdesc = "よろしく，一起去看樱花吗";
       break;
@@ -933,9 +934,9 @@ function showWelcome() {
       posdesc = "拾起一片枫叶赠予你";
       break;
     case "中国":
-      pos = ipLoacation.result.ad_info.province + " " + ipLoacation.result.ad_info.city + " " + ipLoacation.result.ad_info.district;
-      ip = ipLoacation.result.ip;
-      switch (ipLoacation.result.ad_info.province) {
+      pos = ipLocation.result.ad_info.province + " " + ipLocation.result.ad_info.city + " " + ipLocation.result.ad_info.district;
+      ip = ipLocation.result.ip;
+      switch (ipLocation.result.ad_info.province) {
         case "北京市":
           posdesc = "北——京——欢迎你~~~";
           break;
@@ -964,7 +965,7 @@ function showWelcome() {
           posdesc = "众所周知，中国只有两个城市。";
           break;
         case "江苏省":
-          switch (ipLoacation.result.ad_info.city) {
+          switch (ipLocation.result.ad_info.city) {
             case "南京市":
               posdesc = "这是我挺想去的城市啦。";
               break;
@@ -980,7 +981,7 @@ function showWelcome() {
           posdesc = "东风渐绿西湖柳，雁已还人未南归。";
           break;
         case "河南省":
-          switch (ipLoacation.result.ad_info.city) {
+          switch (ipLocation.result.ad_info.city) {
             case "郑州市":
               posdesc = "豫州之域，天地之中。";
               break;
@@ -1085,10 +1086,10 @@ function showWelcome() {
   else if (date.getHours() >= 19 && date.getHours() < 24) timeChange = "<span>晚上好</span>，夜生活嗨起来！";
   else timeChange = "夜深了，早点休息，少熬夜。";
 
-  document.getElementById("welcome-info").innerHTML = `欢迎来自<span>${pos}</span>的小伙伴，${timeChange}<br>你距离ichika约有<span>${dist}</span>公里，${posdesc}`;
+  document.getElementById("welcome-info").innerHTML = `欢迎来自<span>${pos}</span>的小伙伴，${timeChange}<br>你距离fcmmm约有<span>${dist}</span>公里，${posdesc}`;
 
 }
-// window.onload = showWelcome;
+window.onload = showWelcome;
 // 如果使用了pjax在加上下面这行代码
 document.addEventListener('pjax:complete', showWelcome);
 
