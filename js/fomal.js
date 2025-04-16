@@ -3152,10 +3152,10 @@ if (localStorage.getItem("blogbg") != undefined) {
   setBg(localStorage.getItem("blogbg"));
 } else {
   document.getElementById("defineBg").innerText = `:root{
-    --default-bg: url(https://lskypro.acozycotage.net/fcmmm/img/dm14.webp);
-    --darkmode-bg:url(https://lskypro.acozycotage.net/fcmmm/img/yuanshen1.webp);
-    --mobileday-bg: url(https://lskypro.acozycotage.net/fcmmm/img/snow.webp);
-    --mobilenight-bg: url(https://lskypro.acozycotage.net/fcmmm/img/mb8.webp);
+    --default-bg: url(https://img.picui.cn/free/2025/04/09/67f5cea8ce6de.jpg);
+    --darkmode-bg:url(https://img.picui.cn/free/2025/04/13/67fb66a81276e.webp);
+    --mobileday-bg: url(https://img.picui.cn/free/2025/04/16/67ff0cfd5ce9a.webp);
+    --mobilenight-bg: url(https://img.picui.cn/free/2025/04/16/67ff0cff818c4.webp);
   }`;
 }
 // 切换背景主函数
