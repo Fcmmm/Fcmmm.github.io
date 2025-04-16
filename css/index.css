@@ -7316,11 +7316,6 @@ button#go-up:hover #percent {
   transform: translate(-50%, -48px);
 }
 
-/* 美化模块 */
-.winbox {
-  border-radius: 12px;
-  overflow: hidden;
-}
 
 .wb-body {
   background-color: #e5f1f5;

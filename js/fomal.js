@@ -1086,7 +1086,7 @@ function showWelcome() {
   else if (date.getHours() >= 19 && date.getHours() < 24) timeChange = "<span>晚上好</span>，夜生活嗨起来！";
   else timeChange = "夜深了，早点休息，少熬夜。";
 
-  document.getElementById("welcome-info").innerHTML = `欢迎来自<span>${pos}</span>的小伙伴，${timeChange}<br>你距离fcmmm约有<span>${dist}</span>公里，${posdesc}`;
+  document.getElementById("welcome-info").innerHTML =  `<b><center>🎉 欢迎信息 🎉</center>&emsp;&emsp;欢迎来自 <span style="color:var(--theme-color)">${pos}</span> 的小伙伴，${timeChange}您现在距离站长约 <span style="color:var(--theme-color)">${dist}</span> 公里，当前的IP地址为： <span style="color:var(--theme-color)">${ip}</span>， ${posdesc}</b>`;  ;
 
 }
 window.onload = showWelcome;
@@ -3266,15 +3266,15 @@ function changeLight(flag) {
 
 
 // 解决开启Pjax的问题
-function whenDOMReady() {
-  try {
-    let data = loadData('blogbg', 1440)
-    if (data) changeBg_noWindow(data, 0)
-    else localStorage.removeItem('blogbg');
-  } catch (error) { localStorage.removeItem('blogbg'); }
-}
-whenDOMReady()
-document.addEventListener("pjax:success", whenDOMReady)
+// function whenDOMReady() {
+//   try {
+//     let data = loadData('blogbg', 1440)
+//     if (data) changeBg_noWindow(data, 0)
+//     else localStorage.removeItem('blogbg');
+//   } catch (error) { localStorage.removeItem('blogbg'); }
+// }
+// whenDOMReady()
+// document.addEventListener("pjax:success", whenDOMReady)
 
 // 无弹窗提醒更换背景
 // function changeBg_noWindow(s, flag) {
@@ -3385,7 +3385,7 @@ function createWinbox() {
 <h3>1. 二次元</h3>
 <details class="folding-tag" cyan><summary> 查看二次元背景 </summary>
               <div class='content'>
-              <div class="bgbox"><a href="javascript:;" rel="noopener external nofollow" style="background-image:url(https://lskypro.acozycotage.net/fcmmm/img/home_bg.webp)" class="imgbox" onclick="changeBg('url(https://lskypro.acozycotage.net/fcmmm/img/home_bg.webp)')"></a></div>
+              <div class="bgbox"><a href="javascript:;" rel="noopener external nofollow" style="background-image:url(https://lskypro.acozycotage.net/Fomalhaut/img/home_bg.webp)" class="imgbox" onclick="changeBg('url(https://lskypro.acozycotage.net/Fomalhaut/img/home_bg.webp)')"></a></div>
               </div>
             </details>
 
@@ -3394,7 +3394,7 @@ function createWinbox() {
 
 <details class="folding-tag" cyan><summary> 查看风景背景 </summary>
               <div class='content'>
-              <div class="bgbox"><a href="javascript:;" rel="noopener external nofollow" style="background-image:url(https://lskypro.acozycotage.net/fcmmm/img/fj1.webp)" class="imgbox" onclick="changeBg('url(https://lskypro.acozycotage.net/fcmmm/img/fj1.webp)')"></a></div>
+              <div class="bgbox"><a href="javascript:;" rel="noopener external nofollow" style="background-image:url(https://lskypro.acozycotage.net/Fomalhaut/img/fj1.webp)" class="imgbox" onclick="changeBg('url(https://lskypro.acozycotage.net/Fomalhaut/img/fj1.webp)')"></a></div>
               </div>
             </details>
 
@@ -3402,7 +3402,7 @@ function createWinbox() {
 
 <details class="folding-tag" cyan><summary> 查看萌宠背景 </summary>
               <div class='content'>
-              <div class="bgbox"><a href="javascript:;" rel="noopener external nofollow" style="background-image:url(https://lskypro.acozycotage.net/fcmmm/img/mc1.webp)" class="imgbox" onclick="changeBg('url(https://lskypro.acozycotage.net/fcmmm/img/mc1.webp)')"></a></div>
+              <div class="bgbox"><a href="javascript:;" rel="noopener external nofollow" style="background-image:url(https://lskypro.acozycotage.net/Fomalhaut/img/mc1.webp)" class="imgbox" onclick="changeBg('url(https://lskypro.acozycotage.net/Fomalhaut/img/mc1.webp)')"></a></div>
               </div>
             </details>
 
@@ -3426,7 +3426,7 @@ function createWinbox() {
 <h3>6. 适配手机</h3>
 <details class="folding-tag" cyan><summary> 查看适配手机的背景 </summary>
               <div class='content'>
-              <div class="bgbox"><a href="javascript:;" rel="noopener external nofollow" style="background-image:url(https://lskypro.acozycotage.net/fcmmm/img/mb4.webp)" class="pimgbox" onclick="changeBg('url(https://lskypro.acozycotage.net/fcmmm/img/mb4.webp)')"></a></div>
+              <div class="bgbox"><a href="javascript:;" rel="noopener external nofollow" style="background-image:url(https://lskypro.acozycotage.net/Fomalhaut/img/mb4.webp)" class="pimgbox" onclick="changeBg('url(https://lskypro.acozycotage.net/Fomalhaut/img/mb4.webp)')"></a></div>
               </div>
             </details>
 
@@ -3525,6 +3525,5 @@ function toggleWinbox() {
     createWinbox();
   };
 }
-
 
 /* 美化模块 end */
