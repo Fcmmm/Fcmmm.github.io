@@ -2,19 +2,19 @@
 window.onscroll = percent;// 执行函数
 // 页面百分比
 function percent() {
-    let a = document.documentElement.scrollTop || window.pageYOffset, // 卷去高度
-        b = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, document.body.offsetHeight, document.documentElement.offsetHeight, document.body.clientHeight, document.documentElement.clientHeight) - document.documentElement.clientHeight, // 整个网页高度
-        result = Math.round(a / b * 100), // 计算百分比
-        up = document.querySelector("#go-up") // 获取按钮
+  let a = document.documentElement.scrollTop || window.pageYOffset, // 卷去高度
+    b = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, document.body.offsetHeight, document.documentElement.offsetHeight, document.body.clientHeight, document.documentElement.clientHeight) - document.documentElement.clientHeight, // 整个网页高度
+    result = Math.round(a / b * 100), // 计算百分比
+    up = document.querySelector("#go-up") // 获取按钮
 
-    if (result <= 95) {
-        up.childNodes[0].style.display = 'none'
-        up.childNodes[1].style.display = 'block'
-        up.childNodes[1].childNodes[0].innerHTML = result;
-    } else {
-        up.childNodes[1].style.display = 'none'
-        up.childNodes[0].style.display = 'block'
-    }
+  if (result <= 95) {
+    up.childNodes[0].style.display = 'none'
+    up.childNodes[1].style.display = 'block'
+    up.childNodes[1].childNodes[0].innerHTML = result;
+  } else {
+    up.childNodes[1].style.display = 'none'
+    up.childNodes[0].style.display = 'block'
+  }
 }
 /* 阅读进度 end */
 
@@ -527,21 +527,21 @@ if (document.body.clientWidth > 992) {
     // }
     // );
     //自定义（去掉以下注释，并注释掉其他的查看效果）
-    // $("#myscoll").nekoScroll({
-    //     nekoname:'neko', //nekoname，相当于id
-    //     nekoImg:'img/猫咪.png', //neko的背景图片
-    //     scImg:"img/绳1.png", //绳子的背景图片
-    //     bgcolor:'#1e90ff', //背景颜色，没有绳子背景图片时有效
-    //     zoom:0.9, //绳子长度的缩放值
-    //     hoverMsg:'你好~喵', //鼠标浮动到neko上方的对话框信息
-    //     right:'100px', //距离页面右边的距离
-    //     fontFamily:'楷体', //对话框字体
-    //     fontSize:'14px', //对话框字体的大小
-    //     color:'#1e90ff', //对话框字体颜色
-    //     scroWidth:'8px', //绳子的宽度
-    //     z_index:100, //不用解释了吧
-    //     during:1200, //从顶部到底部滑动的时长
-    // });
+    $("#myscoll").nekoScroll({
+      nekoname: 'neko', //nekoname，相当于id
+      nekoImg: 'https://bu.dusays.com/2022/07/20/62d812db74be9.png', //neko的背景图片
+      // scImg: "img/绳1.png", //绳子的背景图片
+      bgcolor: '#1e90ff', //背景颜色，没有绳子背景图片时有效
+      zoom: 0.9, //绳子长度的缩放值
+      hoverMsg: '你好~喵', //鼠标浮动到neko上方的对话框信息
+      right: '100px', //距离页面右边的距离
+      fontFamily: '楷体', //对话框字体
+      fontSize: '14px', //对话框字体的大小
+      color: '#1e90ff', //对话框字体颜色
+      scroWidth: '8px', //绳子的宽度
+      z_index: 100, //不用解释了吧
+      during: 1200, //从顶部到底部滑动的时长
+    });
   })
 }
 
@@ -901,9 +901,9 @@ function getDistance(e1, n1, e2, n2) {
 }
 
 function showWelcome() {
-  
+
   if (!document.getElementById("welcome-info")) return
-  let dist = getDistance(120.120544,36.001794999999994, ipLocation.result.location.lng, ipLocation.result.location.lat); //这里换成自己的经纬度
+  let dist = getDistance(120.120544, 36.001794999999994, ipLocation.result.location.lng, ipLocation.result.location.lat); //这里换成自己的经纬度
   let pos = ipLocation.result.ad_info.nation;
   let ip;
   let posdesc;
@@ -1086,7 +1086,7 @@ function showWelcome() {
   else if (date.getHours() >= 19 && date.getHours() < 24) timeChange = "<span>晚上好</span>，夜生活嗨起来！";
   else timeChange = "夜深了，早点休息，少熬夜。";
 
-  document.getElementById("welcome-info").innerHTML =  `<b><center>🎉 欢迎信息 🎉</center>&emsp;&emsp;欢迎来自 <span style="color:var(--theme-color)">${pos}</span> 的小伙伴，${timeChange}您现在距离站长约 <span style="color:var(--theme-color)">${dist}</span> 公里，当前的IP地址为： <span style="color:var(--theme-color)">${ip}</span>， ${posdesc}</b>`;  ;
+  document.getElementById("welcome-info").innerHTML = `<b><center>🎉 欢迎信息 🎉</center>&emsp;&emsp;欢迎来自 <span style="color:var(--theme-color)">${pos}</span> 的小伙伴，${timeChange}您现在距离站长约 <span style="color:var(--theme-color)">${dist}</span> 公里，当前的IP地址为： <span style="color:var(--theme-color)">${ip}</span>， ${posdesc}</b>`;;
 
 }
 window.onload = showWelcome;

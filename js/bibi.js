@@ -3,7 +3,7 @@ let total = 0
 let nowNum = 0
 let items = []
 let page = 1
-let Url = 'https://space.bilibili.com/290674578?spm_id_from=333.1007.0.0' // 记住替换为你的API链接
+let Url = '' // 修改api，记得带参数page
 
 
 window.addEventListener('DOMContentLoaded', () => {
