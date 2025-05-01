@@ -1,19 +1,33 @@
 /* 阅读进度 start */
-window.onscroll = percent;// 执行函数
+document.addEventListener('pjax:complete', function () {
+  window.onscroll = percent;
+});
+document.addEventListener('DOMContentLoaded', function () {
+  window.onscroll = percent;
+});
 // 页面百分比
 function percent() {
-  let a = document.documentElement.scrollTop || window.pageYOffset, // 卷去高度
-    b = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, document.body.offsetHeight, document.documentElement.offsetHeight, document.body.clientHeight, document.documentElement.clientHeight) - document.documentElement.clientHeight, // 整个网页高度
-    result = Math.round(a / b * 100), // 计算百分比
-    up = document.querySelector("#go-up") // 获取按钮
 
-  if (result <= 95) {
-    up.childNodes[0].style.display = 'none'
-    up.childNodes[1].style.display = 'block'
-    up.childNodes[1].childNodes[0].innerHTML = result;
-  } else {
-    up.childNodes[1].style.display = 'none'
-    up.childNodes[0].style.display = 'block'
+  // 先让菜单栏消失
+  try {
+    rmf.showRightMenu(false);
+    $('.rmMask').attr('style', 'display: none');
+  } catch (err) {
+
+  }
+
+  let a = document.documentElement.scrollTop, // 卷去高度
+    b = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, document.body.offsetHeight, document.documentElement.offsetHeight, document.body.clientHeight, document.documentElement.clientHeight) - document.documentElement.clientHeight, // 整个网页高度 减去 可视高度
+    result = Math.round(a / b * 100), // 计算百分比
+    btn = document.querySelector("#go-up"); // 获取按钮
+
+  if (result < 95) { // 如果阅读进度小于95% 就显示百分比
+    btn.childNodes[0].style.display = 'none'
+    btn.childNodes[1].style.display = 'block'
+    btn.childNodes[1].innerHTML = result + '<span>%</span>';
+  } else { // 如果大于95%就显示回到顶部图标
+    btn.childNodes[1].style.display = 'none'
+    btn.childNodes[0].style.display = 'block'
   }
 }
 /* 阅读进度 end */
@@ -21,7 +35,6 @@ function percent() {
 //----------------------------------------------------------------
 
 /* 导航栏显示标题 start */
-
 document.addEventListener('pjax:complete', tonav);
 document.addEventListener('DOMContentLoaded', tonav);
 //响应pjax
@@ -40,7 +53,7 @@ function tonav() {
     position = scroll;
   });
   //修复没有弄右键菜单的童鞋无法回顶部的问题
-  document.getElementById("page-name").innerText = document.title.split(" | fcmmm🥝")[0];
+  document.getElementById("page-name").innerText = document.title.split(" | Fomalhaut🥝")[0];
 }
 
 function scrollToTop() {
@@ -48,7 +61,6 @@ function scrollToTop() {
   document.getElementById("name-container").setAttribute("style", "display:none");
   btf.scrollToDest(0, 500);
 }
-
 /* 导航栏显示标题 end */
 
 //----------------------------------------------------------------
@@ -398,7 +410,6 @@ function randomPost() {
 /* 随便逛逛 end */
 
 //----------------------------------------------------------------
-
 /* 小猫咪 start */
 if (document.body.clientWidth > 992) {
   function getBasicInfo() {
@@ -527,21 +538,23 @@ if (document.body.clientWidth > 992) {
     // }
     // );
     //自定义（去掉以下注释，并注释掉其他的查看效果）
+    /*
     $("#myscoll").nekoScroll({
-      nekoname: 'neko', //nekoname，相当于id
-      nekoImg: 'https://bu.dusays.com/2022/07/20/62d812db74be9.png', //neko的背景图片
-      // scImg: "img/绳1.png", //绳子的背景图片
-      bgcolor: '#1e90ff', //背景颜色，没有绳子背景图片时有效
-      zoom: 0.9, //绳子长度的缩放值
-      hoverMsg: '你好~喵', //鼠标浮动到neko上方的对话框信息
-      right: '100px', //距离页面右边的距离
-      fontFamily: '楷体', //对话框字体
-      fontSize: '14px', //对话框字体的大小
-      color: '#1e90ff', //对话框字体颜色
-      scroWidth: '8px', //绳子的宽度
-      z_index: 100, //不用解释了吧
-      during: 1200, //从顶部到底部滑动的时长
+        nekoname:'neko1', //nekoname，相当于id
+        nekoImg:'img/猫咪.png', //neko的背景图片
+        scImg:"img/绳1.png", //绳子的背景图片
+        bgcolor:'#1e90ff', //背景颜色，没有绳子背景图片时有效
+        zoom:0.9, //绳子长度的缩放值
+        hoverMsg:'你好~喵', //鼠标浮动到neko上方的对话框信息
+        right:'100px', //距离页面右边的距离
+        fontFamily:'楷体', //对话框字体
+        fontSize:'14px', //对话框字体的大小
+        color:'#1e90ff', //对话框字体颜色
+        scroWidth:'8px', //绳子的宽度
+        z_index:100, //不用解释了吧
+        during:1200, //从顶部到底部滑动的时长
     });
+    */
   })
 }
 
@@ -1299,11 +1312,11 @@ var titleTime;
 document.addEventListener('visibilitychange', function () {
   if (document.hidden) {
     //离开当前页面时标签显示内容
-    document.title = '👀跑哪里去了~';
+    document.title = '快回来！！';
     clearTimeout(titleTime);
   } else {
     //返回当前页面时标签显示内容
-    document.title = '🐖抓到你啦～';
+    document.title = '这就对了嘛~';
     //两秒后变回正常标题
     titleTime = setTimeout(function () {
       document.title = OriginTitile;
@@ -3266,15 +3279,15 @@ function changeLight(flag) {
 
 
 // 解决开启Pjax的问题
-// function whenDOMReady() {
-//   try {
-//     let data = loadData('blogbg', 1440)
-//     if (data) changeBg_noWindow(data, 0)
-//     else localStorage.removeItem('blogbg');
-//   } catch (error) { localStorage.removeItem('blogbg'); }
-// }
-// whenDOMReady()
-// document.addEventListener("pjax:success", whenDOMReady)
+function whenDOMReady() {
+  try {
+    let data = loadData('blogbg', 1440)
+    if (data) changeBg_noWindow(data, 0)
+    else localStorage.removeItem('blogbg');
+  } catch (error) { localStorage.removeItem('blogbg'); }
+}
+whenDOMReady()
+document.addEventListener("pjax:success", whenDOMReady)
 
 // 无弹窗提醒更换背景
 // function changeBg_noWindow(s, flag) {
