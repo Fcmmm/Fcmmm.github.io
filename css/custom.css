@@ -57,7 +57,7 @@
   --color-heoblue: rgb(66, 90, 239);
   --btn-bg: var(--theme-color) !important;
   --scrollbar-color: var(--theme-color) !important;
-  --border-style: 1px solid rgba(169, 169, 169, 0.7);
+  --border-style: 1px solid rgba(169, 169, 169, 0.7) !important;
   /* 代码框行数背景色 */
   --hlnumber-bg: #282c34;
   /* 代码框顶部背景色 */
@@ -2432,8 +2432,8 @@ li.categoryBar-list-item {
 /* 右边的小猫咪 */
 /* 滚动条，我设置的不隐藏，为了可以到达任何地方 */
 /* body::-webkit-scrollbar {
-    width: 0;
-} */
+  width: 0;
+}
 
 .neko {
   width: 64px;
@@ -2480,7 +2480,7 @@ li.categoryBar-list-item {
 
 .neko.fontColor::after {
   color: #333;
-}
+} */
 
 /* 小猫咪手机端消失 */
 @media screen and (max-width: 768px) {
