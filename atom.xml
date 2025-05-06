@@ -6,7 +6,7 @@
   <link href="https://fcmmm.top/atom.xml" rel="self"/>
   
   <link href="https://fcmmm.top/"/>
-  <updated>2025-05-06T12:18:08.382Z</updated>
+  <updated>2025-05-06T12:18:32.322Z</updated>
   <id>https://fcmmm.top/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://fcmmm.top/posts/9366553d.html"/>
     <id>https://fcmmm.top/posts/9366553d.html</id>
     <published>2025-05-06T12:14:38.000Z</published>
-    <updated>2025-05-06T12:18:08.382Z</updated>
+    <updated>2025-05-06T12:18:32.322Z</updated>
     
     <content type="html"><![CDATA[<h1>运行py文件时的报错</h1><p>具体报错内容<br>INTEL MKL ERROR: 找不到指定的模块。 mkl_intel_thread.dll.<br>Intel MKL FATAL ERROR: Cannot load mkl_intel_thread.dll.</p><h2 id="解决方法">解决方法</h2><p>原因可能是在安装一些库时改变了numpy的版本，导致numpy的版本与mkl不匹配，因此需要重新安装numpy。<br>在对应的虚拟环境中运行：pip install -U numpy直接将numpy更新到最新版，或者pip install numpy = 1.**.**自己选择想要的版本号更新。</p>]]></content>
     
@@ -46,7 +46,7 @@ Intel MKL FATAL ERROR: Cannot load mkl_intel_thread.d</summary>
     <link href="https://fcmmm.top/posts/e122f13e.html"/>
     <id>https://fcmmm.top/posts/e122f13e.html</id>
     <published>2025-04-15T09:10:09.000Z</published>
-    <updated>2025-04-16T02:44:58.468Z</updated>
+    <updated>2025-05-06T12:21:41.218Z</updated>
     
     <content type="html"><![CDATA[<h2 id="博客搭建进展">博客搭建进展</h2><p>本博客魔改自[<a href="https://www.fomal.cc"> Fomalhaut🥝</a>]，中间bug不断，现在右边的猫咪还不能正常显示（有时间再搞吧），另外一些静态资源（图片，字体等）还没有上传到服务器端，网页访问时也比较卡，手机端访问时还没有背景图片…主要因为没接触过hexo，以及vercel和github都是第一次部署，域名也是第一次申请，权当是兴趣使然吧，上周一直改这个东西了，实现一个效果还不断伴随着新的bug出现（令人头大），昨天下午<strong>被导师小批</strong>，让我写的<em>实验计划还没写</em>o(╥﹏╥)o，目前的博客就当一个基础的日志用吧，后续再不断完善OvO…</p><h3 id="待完善：">待完善：</h3><ol><li><p>猫咪，参考教程<a href="https://www.fomal.cc/posts/5389e93f.html">博客魔改教程总结(二) | Fomalhaut🥝</a></p></li><li><p>静态资源部署</p></li><li><p><s>手机端背景</s> 4.16已解决（在fomal.js中定义）</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// 更换背景(自己的代码)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="variable language_">localStorage</span>.<span class="title function_">getItem</span>(<span class="string">&quot;blogbg&quot;</span>) != <span class="literal">undefined</span>) &#123;</span><br><span class="line"></span><br><span class="line"> <span class="title function_">setBg</span>(<span class="variable language_">localStorage</span>.<span class="title function_">getItem</span>(<span class="string">&quot;blogbg&quot;</span>));</span><br><span class="line"></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line"> <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;defineBg&quot;</span>).<span class="property">innerText</span> = <span class="string">`:root&#123;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  --default-bg: url();</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  --darkmode-bg:url();</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  --mobileday-bg: url();</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  --mobilenight-bg: url();</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> &#125;`</span>;</span><br><span class="line"></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure></li><li><p><s>地理位置<a href="https://www.fomal.cc/posts/d739261b.html">博客魔改教程总结(五) | Fomalhaut🥝</a></s>  4.15已解决（原因：腾讯地图 api 没有配额！导致一直是失效的！可恶啊）</p></li></ol>]]></content>
     
@@ -58,7 +58,7 @@ Intel MKL FATAL ERROR: Cannot load mkl_intel_thread.d</summary>
     <category term="记录" scheme="https://fcmmm.top/categories/%E8%AE%B0%E5%BD%95/"/>
     
     
-    <category term="div进度" scheme="https://fcmmm.top/tags/div%E8%BF%9B%E5%BA%A6/"/>
+    <category term="diy进度" scheme="https://fcmmm.top/tags/diy%E8%BF%9B%E5%BA%A6/"/>
     
   </entry>
   
