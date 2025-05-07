@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>关于‘cupy’报错</title>
+      <link href="/posts/840d0ca7.html"/>
+      <url>/posts/840d0ca7.html</url>
+      
+        <content type="html"><![CDATA[<h1>运行py文件时报错：ModuleNotFoundError: No module named 'cupy’以及pynvrtc库的安装</h1><h2 id="安装cupy库：">安装cupy库：</h2><p>可以通过pip或conda命令来安装cupy，这里我使用的pip命令：</p><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip <span class="keyword">install</span> cupy-cuda116</span><br></pre></td></tr></table></figure><p>实际上我的cuda版本是11.8，但并没有对应的118版本的cupy，所以我选择了cupy-cuda116，其他版本的cuda可以根据自己的cuda版本选择。</p><h2 id="安装pynvrtc库：">安装pynvrtc库：</h2><p>运行 nvcc --version 或 nvidia-smi 查看 CUDA 版本。<br>如果 CUDA ≥11.0，可能需要手动安装旧版 pynvrtc：</p><figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pynvrtc<span class="operator">=</span><span class="operator">=</span><span class="number">9.2</span></span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 记录 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>关于运行py文件时的报错解决</title>
       <link href="/posts/9366553d.html"/>
       <url>/posts/9366553d.html</url>
