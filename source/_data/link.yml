@@ -1,0 +1,23 @@
+- class_name: 友情链接
+  class_desc: 欢迎交换友链
+  link_list:
+    - name: Example Blog
+      link: https://example.com/
+      avatar: https://api.dicebear.com/7.x/avataaars/svg?seed=friend1
+      descr: 一个很棒的技术博客
+    - name: Hexo Official
+      link: https://hexo.io/
+      avatar: https://api.dicebear.com/7.x/avataaars/svg?seed=hexo
+      descr: 快速、简洁且高效的博客框架
+
+- class_name: 推荐站点
+  class_desc: 一些值得推荐的网站
+  link_list:
+    - name: GitHub
+      link: https://github.com/
+      avatar: https://api.dicebear.com/7.x/avataaars/svg?seed=github
+      descr: 全球最大的代码托管平台
+    - name: MDN
+      link: https://developer.mozilla.org/
+      avatar: https://api.dicebear.com/7.x/avataaars/svg?seed=mdn
+      descr: Web 开发技术文档

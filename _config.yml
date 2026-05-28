@@ -1,0 +1,132 @@
+# Hexo Configuration
+## Docs: https://hexo.io/docs/configuration.html
+## Source: https://github.com/hexojs/hexo/
+
+# Site
+title: My Blog
+subtitle: '分享技术与生活'
+description: 'LINK START! — 一个分享技术教程、开发心得和生活随笔的个人博客'
+keywords:
+  - 博客
+  - 技术
+  - 前端
+  - 后端
+  - 编程
+  - Blog
+  - JavaScript
+  - Hexo
+author: Jta
+language: zh-CN
+timezone: 'Asia/Shanghai'
+
+# URL
+## Set your site url here.
+url: https://fcmmm.xyz
+root: /
+permalink: p/:abbrlink/
+permalink_defaults:
+pretty_urls:
+  trailing_index: false
+  trailing_html: false
+
+# Directory
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+# Writing
+new_post_name: :title.md
+default_layout: post
+titlecase: false
+external_link:
+  enable: true
+  field: site
+  exclude: ''
+filename_case: 0
+render_drafts: false
+post_asset_folder: true
+relative_link: false
+future: true
+syntax_highlighter: highlight.js
+highlight:
+  line_number: true
+  auto_detect: false
+  tab_replace: ''
+  wrap: true
+  hljs: false
+prismjs:
+  preprocess: true
+  line_number: true
+  tab_replace: ''
+
+# Home page setting
+index_generator:
+  path: ''
+  per_page: 8
+  order_by: -date
+
+# Category & Tag
+default_category: uncategorized
+category_map:
+tag_map:
+
+# Metadata elements
+meta_generator: true
+
+# Date / Time format
+date_format: YYYY-MM-DD
+time_format: HH:mm:ss
+updated_option: 'mtime'
+
+# Pagination
+per_page: 8
+pagination_dir: page
+
+# Include / Exclude file(s)
+include:
+exclude:
+ignore:
+
+# Extensions
+## Plugins: https://hexo.io/plugins/
+## Themes: https://hexo.io/themes/
+theme: butterfly
+
+# abbrlink plugin
+abbrlink:
+  alg: crc32
+  rep: dec
+
+# Search
+search:
+  path: search.json
+  field: post
+  content: true
+
+# RSS Feed
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub:
+  content: true
+  content_limit: 140
+  content_limit_delim: ' '
+  order_by: -date
+
+# Sitemap
+sitemap:
+  path: sitemap.xml
+
+# Deployment
+## Docs: https://hexo.io/docs/one-command-deployment
+deploy:
+  type: git
+  repo: https://github.com/Fcmmm/Fcmmm.github.io.git
+  branch: main
+  message: 博客更新

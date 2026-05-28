@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:blog.saop.cc)",
+      "WebSearch",
+      "Bash(curl -sL --max-time 15 \"https://blog.saop.cc/\")",
+      "Bash(mkdir -p \"f:/IDEA_project/Blog02/css\" \"f:/IDEA_project/Blog02/js\" \"f:/IDEA_project/Blog02/img\")",
+      "Bash(npm --version)",
+      "Bash(npx hexo-cli *)",
+      "Bash(rm -rf \"f:/IDEA_project/Blog02/.claude\" && ls -la \"f:/IDEA_project/Blog02/\")",
+      "Bash(npm install *)",
+      "Bash(npx hexo *)",
+      "Bash(git clone *)",
+      "Bash(cat \"C:\\\\\\\\Users\\\\\\\\17413\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\f--IDEA-project-Blog02\\\\\\\\109ed5c1-ed6d-4c7c-9d56-c6ecb0a5361f\\\\\\\\tasks\\\\\\\\b22fwbm7z.output\")",
+      "Bash(curl -sL --max-time 10 \"http://localhost:4000/\")",
+      "Bash(curl -sL --max-time 15 \"https://blog.saop.cc/comments/\")",
+      "Bash(grep -i \"twikoo\\\\|comment\\\\|waline\\\\|envId\" \"C:\\\\\\\\Users\\\\\\\\17413\\\\\\\\.claude\\\\\\\\projects\\\\\\\\f--IDEA-project-Blog02\\\\\\\\109ed5c1-ed6d-4c7c-9d56-c6ecb0a5361f\\\\\\\\tool-results\\\\\\\\bjifio09y.txt\")",
+      "Bash(grep -o 'twikoo\\\\|<div id=\"twikoo\\\\|envId\\\\|twikoo.init\\\\|getCommentsCount' \"C:\\\\\\\\Users\\\\\\\\17413\\\\\\\\.claude\\\\\\\\projects\\\\\\\\f--IDEA-project-Blog02\\\\\\\\109ed5c1-ed6d-4c7c-9d56-c6ecb0a5361f\\\\\\\\tool-results\\\\\\\\bjifio09y.txt\")"
+    ],
+    "additionalDirectories": [
+      "f:\\IDEA_project\\Blog02",
+      "f:\\IDEA_project\\Blog02\\.claude"
+    ]
+  }
+}
