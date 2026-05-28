@@ -1,0 +1,67 @@
+/* Custom styles for the blog */
+
+/* Smooth transitions for theme changes */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Enhanced card hover */
+.card-widget:hover {
+  transform: translateY(-2px);
+}
+
+/* Custom scrollbar for Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #49b1f5 transparent;
+}
+
+/* Better code block styling */
+figure.highlight {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Article title hover enhancements */
+.article-title:hover {
+  color: #49b1f5;
+}
+
+/* Tag cloud hover effect */
+.card-tag-cloud a:hover {
+  background: #49b1f5 !important;
+  color: #fff !important;
+  transform: scale(1.1);
+}
+
+/* Footer styling */
+#footer {
+  position: relative;
+}
+
+#footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #49b1f5, transparent);
+}
+
+/* Go up button animation */
+#go-up:hover {
+  transform: translateY(-3px);
+}
+
+/* Mobile improvements */
+@media screen and (max-width: 768px) {
+  #site-title {
+    font-size: 2rem !important;
+  }
+
+  .layout {
+    padding: 10px !important;
+  }
+}
