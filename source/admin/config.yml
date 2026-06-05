@@ -1,0 +1,77 @@
+backend:
+  name: github
+  repo: Fcmmm/Fcmmm.github.io
+  branch: main
+  base_url: https://vercel-api-ten-sigma.vercel.app
+  auth_endpoint: api/auth
+
+# 管理后台显示
+locale: zh_Hans
+site_url: https://fcmmm.xyz
+display_url: https://fcmmm.xyz
+logo_url: https://fcmmm.xyz/img/avatar.jpg
+
+# 媒体文件存储路径（仓库内）
+media_folder: source/img/uploads
+public_folder: /img/uploads
+publish_mode: editorial_workflow
+
+# 内容集合
+collections:
+  - name: posts
+    label: 文章
+    label_singular: 文章
+    folder: source/_posts
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{title}} — {{date}}"
+    editor:
+      preview: false
+    fields:
+      - label: 标题
+        name: title
+        widget: string
+        hint: 文章标题
+
+      - label: 发布日期
+        name: date
+        widget: datetime
+        format: YYYY-MM-DD HH:mm:ss
+        date_format: YYYY-MM-DD
+        time_format: HH:mm:ss
+        default: ""
+
+      - label: 分类
+        name: categories
+        widget: string
+        required: false
+        hint: 单个分类名，如"生活记录"
+
+      - label: 标签
+        name: tags
+        widget: list
+        required: false
+        hint: 每行一个标签
+
+      - label: 封面图
+        name: cover
+        widget: image
+        required: false
+        hint: 可选，文章列表显示的封面图
+
+      - label: abbrlink
+        name: abbrlink
+        widget: string
+        required: false
+        hint: 永久链接 ID，留空则手动设置
+
+      - label: 置顶
+        name: top
+        widget: boolean
+        required: false
+        default: false
+
+      - label: 正文
+        name: body
+        widget: markdown
+        hint: "支持 Markdown 语法；图片用 ![](/img/uploads/xxx.jpg)"

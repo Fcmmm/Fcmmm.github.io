@@ -42,10 +42,10 @@ social:
   fab fa-bilibili: https://space.bilibili.com/290674578 || B站 || '#00a4da'
 
 # Image Settings
-favicon: /img/favicon.svg
+favicon: /img/favicon.ico
 
 avatar:
-  img: https://api.dicebear.com/7.x/avataaars/svg?seed=blog
+  img: /img/avatar.jpg
   effect: true
 
 disable_top_img: false
@@ -460,7 +460,8 @@ clickShowText:
   mobile: false
 
 # Lightbox Settings
-lightbox: medium_zoom
+# fancybox: 支持滚轮缩放 + 拖拽平移，适合查看长图/大图
+lightbox: fancybox
 
 # Tag Plugins settings
 series:

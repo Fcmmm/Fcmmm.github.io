@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx wrangler *)",
+      "Bash(curl -s -X POST \"https://gallery-api.chuanmengfu.workers.dev\" -H \"Content-Type: application/json\" -d '{\"password\":\"wrong\"}')",
+      "Bash(curl -s -X POST \"https://gallery-api.chuanmengfu.workers.dev\" -H \"Content-Type: application/json\" -d '{\"password\":\"20020113\"}')",
+      "Bash(curl -s --connect-timeout 10 --max-time 15 -X POST \"https://gallery-api.chuanmengfu.workers.dev\" -H \"Content-Type: application/json\" -d '{\"password\":\"20020113\"}')",
+      "Bash(curl -s -m 10 -X POST \"https://gallery-api.chuanmengfu.workers.dev\" -H \"Content-Type: application/json\" -d '{\"password\":\"20020113\"}')",
+      "Bash(nslookup gallery-api.chuanmengfu.workers.dev)",
+      "WebFetch(domain:gallery-api.chuanmengfu.workers.dev)",
+      "Bash(npx vercel *)",
+      "Bash(curl -s -X POST \"https://vercel-api-ten-sigma.vercel.app/api/gallery\" -H \"Content-Type: application/json\" -d '{\"password\":\"wrong\"}')",
+      "Bash(curl -s -X POST \"https://vercel-api-ten-sigma.vercel.app/api/gallery\" -H \"Content-Type: application/json\" -d '{\"password\":\"20020113\"}')",
+      "Bash(curl -sL \"https://fcmmm.xyz/gallery/\")",
+      "WebFetch(domain:vercel-api-ten-sigma.vercel.app)",
+      "Bash(curl -s --max-time 20 -X POST \"https://vercel-api-ten-sigma.vercel.app/api/gallery\" -H \"Content-Type: application/json\" -d '{\"password\":\"20020113\"}')",
+      "Bash(xxd -r -p)",
+      "Bash(base64 -w0)",
+      "Bash(curl -sL -o /dev/null -w \"HTTP %{http_code} Size: %{size_download}\" \"https://res.cloudinary.com/dtnklbnep/image/authenticated/s--BDMk1qOi--/v1780651014/gallery/moment.jpg\")",
+      "Bash(nslookup res.cloudinary.com)",
+      "Bash(curl -sL -o /dev/null -w \"HTTP %{http_code}\" \"http://res.cloudinary.com/dtnklbnep/image/authenticated/s--BDMk1qOi--/v1780651014/gallery/moment.jpg\")",
+      "Bash(curl -sL -o /tmp/test_img.jpg -w \"HTTP %{http_code} Type: %{content_type} Size: %{size_download}\" \"https://res.cloudinary.com/dtnklbnep/image/authenticated/s--BDMk1qOi--/v1780651014/gallery/moment.jpg\")",
+      "Bash(curl -sL \"http://res.cloudinary.com/dtnklbnep/image/authenticated/s--BDMk1qOi--/v1780651014/gallery/moment.jpg\")",
+      "Bash(xxd -l 8)",
+      "Bash(curl -sL -o /dev/null -w \"HTTP %{http_code} Size: %{size_download} Type: %{content_type}\" \"http://res.cloudinary.com/dtnklbnep/image/authenticated/s--BDMk1qOi--/v1780651014/gallery/moment.jpg\")",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}

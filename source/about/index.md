@@ -6,14 +6,13 @@ type: about
 
 ## 关于我
 
-你好，我是 **Jta**，一名热爱技术的开发者。
+你好，我是 **Jta**，不会写代码的计算机专业的人。
 
 ### 技术栈
 
-- **前端**: HTML/CSS, JavaScript, React, Vue
-- **后端**: Node.js, Python, Go
-- **DevOps**: Docker, CI/CD, Linux
-- **其他**: Git, Markdown, Hexo
+- **前端**: 会一点
+- **后端**: 会一点
+- **其他**: 会一点
 
 ### 关于本站
 

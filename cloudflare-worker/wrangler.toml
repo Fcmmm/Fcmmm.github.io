@@ -1,0 +1,13 @@
+name = "gallery-api"
+main = "index.js"
+compatibility_date = "2025-06-01"
+
+# 非敏感配置（可提交到 git）
+[vars]
+CLOUDINARY_CLOUD_NAME = "dtnklbnep"
+IMAGE_IDS = ""
+
+# 敏感配置 — 使用以下命令设置（不会提交到 git）：
+#   npx wrangler secret put GALLERY_PASSWORD
+#   npx wrangler secret put CLOUDINARY_API_SECRET
+#   npx wrangler secret put IMAGE_IDS
