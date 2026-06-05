@@ -24,7 +24,10 @@
       "Bash(xxd -l 8)",
       "Bash(curl -sL -o /dev/null -w \"HTTP %{http_code} Size: %{size_download} Type: %{content_type}\" \"http://res.cloudinary.com/dtnklbnep/image/authenticated/s--BDMk1qOi--/v1780651014/gallery/moment.jpg\")",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(cat .gitmodules)",
+      "Bash(git submodule *)"
     ]
   }
 }
