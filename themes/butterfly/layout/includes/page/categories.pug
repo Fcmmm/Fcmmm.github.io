@@ -1,0 +1,56 @@
+//- 分类页 — 统计图表 + 分类列表
+
+#categories-page
+  .cat-stats-row
+    .cat-stat-card
+      .cat-stat-num= site.categories.length
+      .cat-stat-label 分类总数
+
+  if site.categories.length
+    .cat-chart-wrap
+      .cat-chart-title  分类分布统计
+      .cat-chart
+        each cat in site.categories.toArray().sort(function(a, b) { return b.length - a.length })
+          .cat-chart-row
+            .cat-chart-label
+              a(href=url_for(cat.path))= cat.name
+            .cat-chart-bar-wrap
+              .cat-chart-bar(style="width:" + Math.max(Math.round(cat.length / site.categories.toArray().sort(function(a, b) { return b.length - a.length })[0].length * 100), 8) + "%")
+            .cat-chart-count= cat.length
+
+  .cat-list-section
+    .cat-list-title  所有分类
+    .category-lists!= list_categories()
+
+  style.
+    #categories-page { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+    .cat-stats-row { display: flex; gap: 16px; margin-bottom: 24px; }
+    .cat-stat-card { flex: 1; text-align: center; padding: 24px 16px; background: var(--card-bg, #fff); border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.05); transition: transform .2s; }
+    .cat-stat-card:hover { transform: translateY(-2px); }
+    .cat-stat-num { font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #49B1F5, #6e45e2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .cat-stat-label { font-size: 13px; color: #999; margin-top: 4px; }
+    .cat-chart-wrap { background: var(--card-bg, #fff); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+    .cat-chart-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color, #eee); color: var(--font-color, #333); }
+    .cat-chart { display: flex; flex-direction: column; gap: 10px; }
+    .cat-chart-row { display: flex; align-items: center; gap: 12px; }
+    .cat-chart-label { width: 100px; text-align: right; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cat-chart-label a { font-size: 13px; color: var(--font-color, #555); text-decoration: none; transition: color .2s; font-weight: 500; padding: 0 !important; margin: 0 !important; background: none !important; border-radius: 0 !important; }
+    .cat-chart-label a:hover { color: #49B1F5; transform: none !important; box-shadow: none !important; background: none !important; }
+    .cat-chart-bar-wrap { flex: 1; height: 28px; background: #f0f0f0; border-radius: 8px; overflow: hidden; }
+    .cat-chart-bar { height: 100%; border-radius: 8px; transition: width .6s ease; min-width: 2px; background: #49B1F5; }
+    .cat-chart-count { width: 32px; text-align: center; font-size: 13px; font-weight: 600; color: #888; flex-shrink: 0; }
+    .cat-list-section { background: var(--card-bg, #fff); border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+    .cat-list-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color, #eee); color: var(--font-color, #333); }
+    .category-lists { padding: 8px 0; }
+    .category-lists .category-list { list-style: none; padding: 0; margin: 0; }
+    .category-lists .category-list > li { margin: 8px 0; }
+    .category-lists .category-list a { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 15px; font-weight: 600; color: #49B1F5; text-decoration: none; background: rgba(73,177,245,.06); transition: all .25s; }
+    .category-lists .category-list a:hover { background: #49B1F5; color: #fff; transform: translateX(4px); box-shadow: 0 4px 12px rgba(73,177,245,.25); }
+    .category-lists .category-list .category-list-count { color: #999; font-size: 12px; margin-left: 4px; }
+    .category-lists .category-list a:hover .category-list-count { color: rgba(255,255,255,.8); }
+    .category-lists .category-list .category-list-child { padding-left: 24px; margin: 4px 0; }
+    .category-lists .category-list .category-list-child a { font-size: 14px; font-weight: 400; padding: 6px 14px; }
+    [data-theme="dark"] .cat-stat-card, [data-theme="dark"] .cat-chart-wrap, [data-theme="dark"] .cat-list-section { background: #1e1e1e; }
+    [data-theme="dark"] .cat-chart-bar-wrap { background: #2a2a2a; }
+    [data-theme="dark"] .category-lists .category-list a { background: rgba(73,177,245,.12); }
+    @media screen and (max-width: 768px) { .cat-stats-row { gap: 10px; } .cat-stat-num { font-size: 24px; } .cat-chart-label { width: 70px; } .cat-chart-wrap, .cat-list-section { padding: 16px; } }

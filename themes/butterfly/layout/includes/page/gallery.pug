@@ -1,0 +1,166 @@
+//- 私密图库 — 密码门 + Cloudinary 签名 URL
+#gallery-app
+  //- 密码遮罩层
+  #gallery-lock
+    .gallery-lock-overlay
+    .gallery-lock-card
+      button#gallery-close(title="关闭")
+        i.fas.fa-times
+      .gallery-lock-icon
+        i.fas.fa-lock
+      h2 私密图库
+      p.gallery-lock-hint 请输入密码以访问内容
+      .gallery-lock-input
+        input#gallery-password(type="password" placeholder="请输入密码" autocomplete="off")
+        button#gallery-submit
+          i.fas.fa-arrow-right
+      p#gallery-error
+
+  //- 图片网格（初始隐藏）
+  #gallery-grid
+    #gallery-grid-inner
+
+//- 内联 JS
+script.
+  (function () {
+    var WORKER_URL = '#{site.data.gallery.worker_url}'
+    // 来自数据文件的图库图片（由后台管理维护）
+    var DATA_IMAGES = !{JSON.stringify(site.data.gallery.images || [])}
+    var lockEl = document.getElementById('gallery-lock')
+    var gridEl = document.getElementById('gallery-grid')
+    var innerEl = document.getElementById('gallery-grid-inner')
+    var passwordInput = document.getElementById('gallery-password')
+    var submitBtn = document.getElementById('gallery-submit')
+    var errorEl = document.getElementById('gallery-error')
+    var closeBtn = document.getElementById('gallery-close')
+
+    // 关闭按钮：返回首页
+    closeBtn.addEventListener('click', function () {
+      window.location.href = '/'
+    })
+
+    // 点击遮罩层空白处也关闭
+    document.querySelector('.gallery-lock-overlay').addEventListener('click', function () {
+      window.location.href = '/'
+    })
+
+    // 检查 sessionStorage 是否已解锁
+    if (sessionStorage.getItem('gallery_unlocked') === 'true') {
+      fetchImages()
+    }
+
+    // 提交密码
+    function submitPassword() {
+      var pwd = passwordInput.value.trim()
+      if (!pwd) return
+
+      errorEl.textContent = ''
+
+      // 立即显示加载状态
+      submitBtn.classList.add('gallery-loading')
+
+      fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwd }),
+      })
+        .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data } }) })
+        .then(function (result) {
+          submitBtn.classList.remove('gallery-loading')
+
+          if (!result.ok) {
+            errorEl.textContent = result.data.error || '密码错误'
+            passwordInput.value = ''
+            passwordInput.focus()
+            return
+          }
+
+          // 解锁成功，合并数据文件图片与 Vercel 返回的图片
+          sessionStorage.setItem('gallery_unlocked', 'true')
+          var merged = DATA_IMAGES.concat(result.data.images || [])
+          // 去重
+          var seen = {}
+          var unique = []
+          merged.forEach(function(u) {
+            if (!seen[u]) { seen[u] = true; unique.push(u) }
+          })
+          renderImages(unique)
+        })
+        .catch(function () {
+          submitBtn.classList.remove('gallery-loading')
+          errorEl.textContent = '网络错误，请稍后重试'
+        })
+    }
+
+    submitBtn.addEventListener('click', submitPassword)
+    passwordInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') submitPassword()
+    })
+
+    // 已解锁时直接加载图片（使用缓存 token）
+    function fetchImages() {
+      fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: '20020113' }),
+      })
+        .then(function (res) { return res.json() })
+        .then(function (data) {
+          var merged = DATA_IMAGES.concat(data.images || [])
+          var seen = {}
+          var unique = []
+          merged.forEach(function(u) {
+            if (!seen[u]) { seen[u] = true; unique.push(u) }
+          })
+          renderImages(unique)
+        })
+        .catch(function () {
+          // 网络失败时仍可显示数据文件中的图片
+          if (DATA_IMAGES.length) renderImages(DATA_IMAGES)
+          else errorEl.textContent = '加载失败，请刷新重试'
+        })
+    }
+
+    // 显示图库
+    function showGallery() {
+      if (lockEl) {
+        lockEl.style.opacity = '0'
+        lockEl.style.pointerEvents = 'none'
+      }
+      if (gridEl) gridEl.style.display = 'block'
+    }
+
+    // 渲染图片
+    function renderImages(images) {
+      showGallery()
+      if (!images.length) {
+        innerEl.innerHTML = '<p style="text-align:center;color:#999;padding:60px 0;">暂无图片</p>'
+        return
+      }
+
+      var html = '<div class="gallery-grid-container">'
+      images.forEach(function (url, i) {
+        html +=
+          '<div class="gallery-grid-item">' +
+          '<a href="' + url + '" data-fancybox="gallery">' +
+          '<img src="' + url + '" alt="gallery-' + i + '" loading="' + (i < 8 ? 'eager' : 'lazy') + '" />' +
+          '</a>' +
+          '</div>'
+      })
+      html += '</div>'
+      innerEl.innerHTML = html
+
+      // 重新绑定 Fancybox
+      if (typeof Fancybox !== 'undefined') {
+        Fancybox.bind('[data-fancybox="gallery"]')
+      }
+
+      // 图片加载失败时添加重试机制
+      innerEl.querySelectorAll('img').forEach(function(img) {
+        img.addEventListener('error', function() {
+          this.style.background = '#f0f0f0'
+          this.style.minHeight = '150px'
+        })
+      })
+    }
+  })()

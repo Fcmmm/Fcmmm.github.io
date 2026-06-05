@@ -130,4 +130,5 @@ deploy:
   type: git
   repo: https://github.com/Fcmmm/Fcmmm.github.io.git
   branch: main
+  force: true
   message: 博客更新

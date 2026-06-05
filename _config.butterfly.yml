@@ -482,7 +482,7 @@ pjax:
   exclude:
 
 aplayerInject:
-  enable: false
+  enable: true
   per_page: true
 
 snackbar:

@@ -1,0 +1,51 @@
+//- 标签页 — 统计图表 + 标签云
+
+#tags-page
+  .tag-stats-row
+    .tag-stat-card
+      .tag-stat-num= site.tags.length
+      .tag-stat-label 标签总数
+
+  if site.tags.length
+    .tag-chart-wrap
+      .tag-chart-title  热门标签统计
+      .tag-chart
+        each tag in site.tags.toArray().sort(function(a, b) { return b.length - a.length }).slice(0, 15)
+          .tag-chart-row
+            .tag-chart-label
+              a(href=url_for(tag.path))= tag.name
+            .tag-chart-bar-wrap
+              .tag-chart-bar(style="width:" + Math.max(Math.round(tag.length / site.tags.toArray().sort(function(a, b) { return b.length - a.length })[0].length * 100), 5) + "%")
+            .tag-chart-count= tag.length
+
+  .tag-cloud-section
+    .tag-cloud-title  所有标签
+    .tag-cloud-list.text-center
+      !=cloudTags({source: site.tags, orderby: page.orderby || 'random', order: page.order || 1, minfontsize: 1.2, maxfontsize: 1.5, limit: 0, unit: 'em', custom_colors: page.custom_colors})
+
+  style.
+    #tags-page { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+    .tag-stats-row { display: flex; gap: 16px; margin-bottom: 24px; }
+    .tag-stat-card { flex: 1; text-align: center; padding: 24px 16px; background: var(--card-bg, #fff); border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.05); transition: transform .2s; }
+    .tag-stat-card:hover { transform: translateY(-2px); }
+    .tag-stat-num { font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #49B1F5, #6e45e2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .tag-stat-label { font-size: 13px; color: #999; margin-top: 4px; }
+    .tag-cloud-section { background: var(--card-bg, #fff); border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+    .tag-cloud-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color, #eee); color: var(--font-color, #333); }
+    .tag-cloud-list { padding: 8px 0; }
+    .tag-cloud-list a { display: inline-block; margin: 4px 6px; padding: 6px 14px; border-radius: 20px; background: rgba(73,177,245,.08); color: #49B1F5; text-decoration: none; transition: all .25s; font-weight: 500; }
+    .tag-cloud-list a:hover { background: #49B1F5; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(73,177,245,.3); }
+    .tag-chart-wrap { background: var(--card-bg, #fff); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+    .tag-chart-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color, #eee); color: var(--font-color, #333); }
+    .tag-chart { display: flex; flex-direction: column; gap: 10px; }
+    .tag-chart-row { display: flex; align-items: center; gap: 12px; }
+    .tag-chart-label { width: 100px; text-align: right; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tag-chart-label a { font-size: 13px; color: var(--font-color, #555); text-decoration: none; transition: color .2s; background: none !important; padding: 0 !important; margin: 0 !important; border-radius: 0 !important; }
+    .tag-chart-label a:hover { color: #49B1F5; background: none !important; transform: none !important; box-shadow: none !important; }
+    .tag-chart-bar-wrap { flex: 1; height: 24px; background: #f0f0f0; border-radius: 6px; overflow: hidden; }
+    .tag-chart-bar { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #49B1F5, #6e45e2); transition: width .6s ease; min-width: 2px; }
+    .tag-chart-count { width: 32px; text-align: center; font-size: 13px; font-weight: 600; color: #888; flex-shrink: 0; }
+    [data-theme="dark"] .tag-stat-card, [data-theme="dark"] .tag-chart-wrap, [data-theme="dark"] .tag-cloud-section { background: #1e1e1e; }
+    [data-theme="dark"] .tag-chart-bar-wrap { background: #2a2a2a; }
+    [data-theme="dark"] .tag-cloud-list a { background: rgba(73,177,245,.12); }
+    @media screen and (max-width: 768px) { .tag-stats-row { gap: 10px; } .tag-stat-num { font-size: 28px; } .tag-chart-label { width: 70px; } .tag-chart-wrap { padding: 16px; } }
