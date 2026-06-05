@@ -6,9 +6,34 @@
   <title>博客管理后台</title>
 </head>
 <body>
+  <!--
+    在 Decap CMS 加载前处理 OAuth token：
+    从 /admin/#/access_token=xxx → 重写为 /admin/#access_token=xxx
+    CMS 的 getHashValues() 才能正确解析
+  -->
+  <script>
+    (function() {
+      var hash = window.location.hash;
+      if (hash && hash.indexOf('access_token') !== -1) {
+        // 去掉 CMS 路由添加的 / 前缀
+        var clean = hash.replace(/^#\/?/, '');
+        var pairs = clean.split('&');
+        var token = '', provider = 'github';
+        pairs.forEach(function(p) {
+          var kv = p.split('=');
+          if (kv[0] === 'access_token') token = kv[1];
+          if (kv[0] === 'provider') provider = kv[1];
+        });
+        if (token) {
+          // 重写为 CMS 能识别的纯净 hash 格式
+          window.location.hash = '#access_token=' + token + '&token_type=bearer&provider=' + provider;
+        }
+      }
+    })();
+  </script>
+
   <script src="https://unpkg.com/decap-cms@^3.6/dist/decap-cms.js"></script>
   <script>
-    // 自定义预览样式（匹配 Butterfly 主题）
     CMS.registerPreviewStyle('/css/index.css');
   </script>
 </body>

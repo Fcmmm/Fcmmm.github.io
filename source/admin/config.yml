@@ -14,7 +14,6 @@ logo_url: https://fcmmm.xyz/img/avatar.jpg
 # 媒体文件存储路径（仓库内）
 media_folder: source/img/uploads
 public_folder: /img/uploads
-publish_mode: editorial_workflow
 
 # 内容集合
 collections:
