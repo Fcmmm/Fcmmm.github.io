@@ -182,16 +182,28 @@ function renderPostList() {
 }
 
 function newPost() {
-  CURRENT = { name: '', content: '', sha: null, isNew: true };
+  var now = new Date();
+  var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
+  var dateStr = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) +
+    ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  var nameStr = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + '-new-post.md';
+  var bodyTemplate = '## 标题\n\n正文内容...\n\n<!-- more -->\n\n## 小标题\n\n更多内容...\n';
+  var fm = '---\ntitle: \ndate: ' + dateStr + '\ncategories: \ntags:\n  - \ncover: \'\'\n---\n' + bodyTemplate;
+  CURRENT = { name: nameStr, content: fm, sha: null, isNew: true };
   renderEditor();
 }
 
 function editPost(idx) {
   var file = POSTS[idx];
   gh('/contents/source/_posts/' + file.name + '?ref=source').then(function(data) {
+    // 正确的 UTF-8 解码（atob 不支持中文）
+    var raw = atob(data.content);
+    var bytes = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i) & 0xff;
+    var content = new TextDecoder('utf-8').decode(bytes);
     CURRENT = {
       name: file.name,
-      content: atob(data.content),
+      content: content,
       sha: data.sha,
       isNew: false
     };
@@ -225,10 +237,21 @@ function renderEditor() {
   html += '<input id="fcats" value="' + escAttr(front.categories || '') + '" placeholder="如：生活记录">';
 
   html += '<label>标签（逗号分隔）</label>';
-  html += '<input id="ftags" value="' + escAttr((front.tags || []).join ? (front.tags || []).join(', ') : (front.tags || '')) + '" placeholder="标签1, 标签2">';
+  html += '<input id="ftags" value="' + escAttr((front.tags || []).join ? (front.tags || []).join(', ') : (front.tags || '')) + '" placeholder="生活记录, 开发心得, AI..." list="tags-list" autocomplete="off">';
+  html += '<datalist id="tags-list">';
+  ['生活记录','开发心得','Vibe Coding','Claude Code','AI','DeepSeek','编程','教程','前端开发','后端开发','DevOps','Linux','Git','Markdown','Hexo','JavaScript','Python','Docker','技术文档','信息技术','开源软件','代码块','版本控制','CSS','提问技巧'].forEach(function(t) {
+    html += '<option value="' + t + '">';
+  });
+  html += '</datalist>';
 
   html += '<label>封面图 URL</label>';
-  html += '<input id="fcover" value="' + escAttr(front.cover || '') + '" placeholder="https://... 或 /img/uploads/...">';
+  html += '<input id="fcover" value="' + escAttr(front.cover || '') + '" placeholder="https://picsum.photos/seed/xxx/800/400 或 /img/uploads/xxx.jpg" list="cover-list">';
+  html += '<datalist id="cover-list">';
+  html += '<option value="https://picsum.photos/seed/cover/800/400">';
+  html += '<option value="https://picsum.photos/seed/nature/800/400">';
+  html += '<option value="https://picsum.photos/seed/code/800/400">';
+  html += '<option value="/img/uploads/">';
+  html += '</datalist>';
 
   html += '<label>正文（Markdown）</label>';
   html += '<textarea id="fbody">' + escHtml(front.body || '') + '</textarea>';
@@ -308,7 +331,7 @@ function savePost() {
 
   var body = {
     message: name.replace('.md','') + ' 更新',
-    content: btoa(unescape(encodeURIComponent(content))),
+    content: utf8ToBase64(content),
     branch: 'source'
   };
   if (CURRENT.sha) body.sha = CURRENT.sha;
@@ -372,6 +395,19 @@ function toast(msg, type) {
 
 function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escAttr(s) { return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function utf8ToBase64(str) {
+  var utf8 = new TextEncoder().encode(str);
+  var bin = '';
+  for (var i = 0; i < utf8.length; i++) bin += String.fromCharCode(utf8[i]);
+  return btoa(bin);
+}
+function collectTags() {
+  var tags = [];
+  POSTS.forEach(function(p) {
+    if (p._tags) { p._tags.forEach(function(t) { if (tags.indexOf(t) === -1) tags.push(t); }); }
+  });
+  return tags.sort();
+}
 </script>
 </body>
 </html>
