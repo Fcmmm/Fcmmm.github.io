@@ -1,40 +1,377 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>博客管理后台</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>博客管理后台</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;color:#333;min-height:100vh}
+#login{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.login-card{background:#fff;padding:48px 40px;border-radius:16px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.08);max-width:380px;width:90%}
+.login-card h1{font-size:22px;margin-bottom:8px}
+.login-card p{color:#999;font-size:14px;margin-bottom:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border:none;border-radius:10px;font-size:15px;cursor:pointer;transition:.2s}
+.btn-dark{background:#24292e;color:#fff}
+.btn-dark:hover{background:#1b1f23}
+.btn-primary{background:#49B1F5;color:#fff}
+.btn-primary:hover{background:#3a8fd4}
+.btn-danger{background:#e74c3c;color:#fff}
+.btn-sm{padding:6px 14px;font-size:13px}
+#app{display:none;height:100vh}
+#app.mobile{flex-direction:column}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#fff;border-bottom:1px solid #eee}
+.header h2{font-size:16px}
+.sidebar{width:280px;background:#fff;border-right:1px solid #eee;overflow-y:auto;flex-shrink:0}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+.sidebar-header span{font-weight:600;font-size:15px}
+.post-item{padding:14px 20px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .15s}
+.post-item:hover{background:#f8f9fa}
+.post-item.active{background:#e8f4fd;border-left:3px solid #49B1F5}
+.post-item .title{font-size:14px;font-weight:500;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post-item .meta{font-size:12px;color:#999}
+.main{flex:1;overflow-y:auto;padding:24px 32px}
+.editor{max-width:800px;margin:0 auto}
+.editor label{display:block;font-size:13px;font-weight:600;color:#666;margin:16px 0 6px}
+.editor input,.editor textarea,.editor select{width:100%;padding:10px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;transition:border-color .2s}
+.editor input:focus,.editor textarea:focus{border-color:#49B1F5}
+.editor textarea{min-height:320px;font-family:'SF Mono',Consolas,monospace;resize:vertical;line-height:1.6}
+.editor-actions{display:flex;gap:10px;margin-top:20px}
+.empty-state{text-align:center;padding:60px 20px;color:#999}
+.toast{position:fixed;bottom:24px;right:24px;padding:12px 24px;border-radius:10px;color:#fff;font-size:14px;z-index:9999;animation:slideUp .3s ease}
+.toast-success{background:#27ae60}
+.toast-error{background:#e74c3c}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.layout{display:flex;height:calc(100vh - 49px)}
+@media(max-width:768px){
+.layout{flex-direction:column}
+.sidebar{width:100%;max-height:40vh;border-right:none;border-bottom:1px solid #eee}
+.main{padding:16px}
+.editor input,.editor textarea{font-size:16px}
+}
+</style>
 </head>
 <body>
-  <!--
-    在 Decap CMS 加载前处理 OAuth token：
-    从 /admin/#/access_token=xxx → 重写为 /admin/#access_token=xxx
-    CMS 的 getHashValues() 才能正确解析
-  -->
-  <script>
-    (function() {
-      var hash = window.location.hash;
-      if (hash && hash.indexOf('access_token') !== -1) {
-        // 去掉 CMS 路由添加的 / 前缀
-        var clean = hash.replace(/^#\/?/, '');
-        var pairs = clean.split('&');
-        var token = '', provider = 'github';
-        pairs.forEach(function(p) {
-          var kv = p.split('=');
-          if (kv[0] === 'access_token') token = kv[1];
-          if (kv[0] === 'provider') provider = kv[1];
-        });
-        if (token) {
-          // 重写为 CMS 能识别的纯净 hash 格式
-          window.location.hash = '#access_token=' + token + '&token_type=bearer&provider=' + provider;
-        }
-      }
-    })();
-  </script>
 
-  <script src="https://unpkg.com/decap-cms@^3.6/dist/decap-cms.js"></script>
-  <script>
-    CMS.registerPreviewStyle('/css/index.css');
-  </script>
+<div id="login">
+  <div class="login-card">
+    <h1>博客管理后台</h1>
+    <p>使用 GitHub 账号登录以管理博客内容</p>
+    <button class="btn btn-dark" onclick="openAuth()">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      使用 GitHub 登录
+    </button>
+  </div>
+</div>
+
+<div id="app">
+  <div class="header">
+    <h2> 博客管理后台</h2>
+    <button class="btn btn-sm btn-danger" onclick="logout()">退出</button>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <span>文章列表</span>
+        <button class="btn btn-sm btn-primary" onclick="newPost()">+ 新建</button>
+      </div>
+      <div id="post-list"></div>
+    </div>
+    <div class="main">
+      <div class="editor" id="editor">
+        <div class="empty-state">选择文章进行编辑，或点击"新建"</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+// ---- State ----
+var TOKEN = sessionStorage.getItem('gh_token') || '';
+var POSTS = [];
+var CURRENT = null; // currently editing post
+
+// ---- Auth ----
+function openAuth() {
+  var w = 600, h = 700;
+  var left = (screen.width - w) / 2;
+  var top = (screen.height - h) / 2;
+  window.open(
+    'https://vercel-api-ten-sigma.vercel.app/api/auth',
+    'github_auth',
+    'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top
+  );
+}
+
+// Listen for token from popup postMessage or URL query
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.token) {
+    saveToken(e.data.token);
+  }
+});
+
+// Check URL query for token
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var t = params.get('access_token') || params.get('token');
+  if (t) {
+    saveToken(t);
+    window.history.replaceState({}, '', '/admin/');
+  }
+  if (TOKEN) showApp();
+})();
+
+function saveToken(token) {
+  TOKEN = token;
+  sessionStorage.setItem('gh_token', token);
+  showApp();
+}
+
+function logout() {
+  sessionStorage.removeItem('gh_token');
+  TOKEN = '';
+  POSTS = [];
+  CURRENT = null;
+  document.getElementById('login').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+// ---- GitHub API ----
+function gh(path, method, body) {
+  method = method || 'GET';
+  var opts = {
+    method: method,
+    headers: {
+      'Authorization': 'token ' + TOKEN,
+      'Accept': 'application/vnd.github.v3+json'
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  return fetch('https://api.github.com/repos/Fcmmm/Fcmmm.github.io' + path, opts)
+    .then(function(r) {
+      if (!r.ok) throw new Error('GitHub API error: ' + r.status);
+      return r.json();
+    });
+}
+
+// ---- Posts ----
+function loadPosts() {
+  gh('/contents/source/_posts?ref=source').then(function(files) {
+    POSTS = (files || []).filter(function(f) { return f.name.endsWith('.md'); });
+    renderPostList();
+  }).catch(function(e) {
+    toast('加载文章列表失败: ' + e.message, 'error');
+  });
+}
+
+function renderPostList() {
+  var container = document.getElementById('post-list');
+  if (!POSTS.length) {
+    container.innerHTML = '<div class="empty-state" style="padding:30px">暂无文章</div>';
+    return;
+  }
+  container.innerHTML = POSTS.map(function(p, i) {
+    var active = CURRENT && CURRENT.name === p.name ? ' active' : '';
+    return '<div class="post-item' + active + '" onclick="editPost(' + i + ')">' +
+      '<div class="title">' + escHtml(p.name.replace('.md','')) + '</div>' +
+      '<div class="meta">' + p.size + ' bytes</div>' +
+      '</div>';
+  }).join('');
+}
+
+function newPost() {
+  CURRENT = { name: '', content: '', sha: null, isNew: true };
+  renderEditor();
+}
+
+function editPost(idx) {
+  var file = POSTS[idx];
+  gh('/contents/source/_posts/' + file.name + '?ref=source').then(function(data) {
+    CURRENT = {
+      name: file.name,
+      content: atob(data.content),
+      sha: data.sha,
+      isNew: false
+    };
+    renderEditor();
+    renderPostList();
+  }).catch(function(e) {
+    toast('加载文章失败: ' + e.message, 'error');
+  });
+}
+
+function renderEditor() {
+  if (!CURRENT) {
+    document.getElementById('editor').innerHTML = '<div class="empty-state">选择文章进行编辑，或点击"新建"</div>';
+    return;
+  }
+
+  var content = CURRENT.content || '';
+  var front = parseFrontmatter(content);
+
+  var html = '';
+  html += '<label>文件名</label>';
+  html += '<input id="fn" value="' + escAttr(CURRENT.name || '') + '" placeholder="2026-06-01-my-post.md">';
+
+  html += '<label>标题</label>';
+  html += '<input id="ftitle" value="' + escAttr(front.title || '') + '" placeholder="文章标题">';
+
+  html += '<label>日期</label>';
+  html += '<input id="fdate" value="' + escAttr(front.date || '') + '" placeholder="YYYY-MM-DD HH:mm:ss">';
+
+  html += '<label>分类</label>';
+  html += '<input id="fcats" value="' + escAttr(front.categories || '') + '" placeholder="如：生活记录">';
+
+  html += '<label>标签（逗号分隔）</label>';
+  html += '<input id="ftags" value="' + escAttr((front.tags || []).join ? (front.tags || []).join(', ') : (front.tags || '')) + '" placeholder="标签1, 标签2">';
+
+  html += '<label>封面图 URL</label>';
+  html += '<input id="fcover" value="' + escAttr(front.cover || '') + '" placeholder="https://... 或 /img/uploads/...">';
+
+  html += '<label>正文（Markdown）</label>';
+  html += '<textarea id="fbody">' + escHtml(front.body || '') + '</textarea>';
+
+  html += '<div class="editor-actions">';
+  html += '<button class="btn btn-primary" onclick="savePost()">保存并发布</button>';
+  html += '<button class="btn btn-sm" style="background:#eee;color:#666" onclick="uploadImage()">上传图片</button>';
+  html += '<button class="btn btn-sm" style="background:#eee;color:#666" onclick="CURRENT=null;renderEditor();renderPostList()">取消</button>';
+  html += '</div>';
+
+  document.getElementById('editor').innerHTML = html;
+}
+
+function parseFrontmatter(md) {
+  var result = { body: md || '' };
+  if (!md || !md.startsWith('---')) return result;
+  var end = md.indexOf('---', 4);
+  if (end === -1) return result;
+  var fm = md.substring(4, end);
+  result.body = md.substring(end + 3).trim();
+
+  var lines = fm.split('\n');
+  var tags = [];
+  var inTags = false;
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    var m = line.match(/^(\w+):\s*(.*)/);
+    if (m) {
+      inTags = false;
+      if (m[1] === 'tags') {
+        inTags = true;
+        if (m[2].trim()) tags.push(m[2].trim());
+      } else {
+        result[m[1]] = m[2].trim().replace(/^['"]|['"]$/g, '');
+      }
+    } else if (inTags) {
+      var tm = line.match(/^\s*-\s*(.*)/);
+      if (tm) tags.push(tm[1].trim().replace(/^['"]|['"]$/g, ''));
+    }
+  }
+  if (tags.length) result.tags = tags;
+  return result;
+}
+
+function buildFrontmatter() {
+  var title = document.getElementById('ftitle').value.trim();
+  var date = document.getElementById('fdate').value.trim();
+  var cats = document.getElementById('fcats').value.trim();
+  var tags = document.getElementById('ftags').value.trim();
+  var cover = document.getElementById('fcover').value.trim();
+  var body = document.getElementById('fbody').value;
+
+  var lines = ['---'];
+  if (title) lines.push('title: ' + title);
+  if (date) lines.push('date: ' + date);
+  if (cats) lines.push('categories: ' + cats);
+  if (tags) {
+    lines.push('tags:');
+    tags.split(',').forEach(function(t) {
+      var tt = t.trim();
+      if (tt) lines.push('  - ' + tt);
+    });
+  }
+  if (cover) lines.push("cover: '" + cover + "'");
+  lines.push('---');
+  lines.push('');
+  lines.push(body);
+  return lines.join('\n');
+}
+
+function savePost() {
+  var name = document.getElementById('fn').value.trim();
+  var content = buildFrontmatter();
+
+  if (!name) { toast('请输入文件名', 'error'); return; }
+  if (!name.endsWith('.md')) name += '.md';
+
+  var body = {
+    message: name.replace('.md','') + ' 更新',
+    content: btoa(unescape(encodeURIComponent(content))),
+    branch: 'source'
+  };
+  if (CURRENT.sha) body.sha = CURRENT.sha;
+
+  gh('/contents/source/_posts/' + name, 'PUT', body).then(function() {
+    toast('发布成功！GitHub Actions 将自动部署');
+    CURRENT = null;
+    loadPosts();
+    renderEditor();
+  }).catch(function(e) {
+    toast('发布失败: ' + e.message, 'error');
+  });
+}
+
+function uploadImage() {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = function() {
+    var file = input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function() {
+      var base64 = reader.result.split(',')[1];
+      var path = 'source/img/uploads/' + Date.now() + '_' + file.name;
+      gh('/contents/' + path, 'PUT', {
+        message: 'Upload image ' + file.name,
+        content: base64,
+        branch: 'source'
+      }).then(function() {
+        var url = '/img/uploads/' + path.split('/').pop();
+        var ta = document.getElementById('fbody');
+        if (ta) {
+          ta.value += '\n![](' + url + ')';
+        }
+        toast('图片上传成功');
+      }).catch(function(e) {
+        toast('上传失败: ' + e.message, 'error');
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+// ---- UI ----
+function showApp() {
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadPosts();
+}
+
+function toast(msg, type) {
+  type = type || 'success';
+  var el = document.createElement('div');
+  el.className = 'toast toast-' + type;
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(function() { el.remove(); }, 3000);
+}
+
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s) { return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
 </body>
 </html>

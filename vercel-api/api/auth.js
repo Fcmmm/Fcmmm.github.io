@@ -51,18 +51,19 @@ export default async function handler(req, res) {
 <h2>❌ 授权失败</h2><p>${data.error_description || data.error}</p></body></html>`)
     }
 
-    // 返回页面：将 token 传给主窗口后自动关闭
+    // 将 token 传回主窗口（query 参数）
     const token = data.access_token
     res.writeHead(200, { 'Content-Type': 'text/html' })
     return res.end(`<!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
 <body style="text-align:center;font-family:sans-serif;padding-top:60px;background:#fff;">
 <h2>✅ 授权成功</h2>
-<p>即将跳转...</p>
+<p>即将进入管理后台...</p>
 <script>
 (function() {
-  var target = '${cmsUrl}#access_token=${token}&token_type=bearer&provider=github';
+  var target = '${cmsUrl}?access_token=${token}';
   if (window.opener && window.opener !== window) {
+    window.opener.postMessage({ token: '${token}', provider: 'github' }, '*');
     window.opener.location.href = target;
     window.close();
   } else {
