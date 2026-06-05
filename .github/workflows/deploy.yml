@@ -22,6 +22,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Verify theme
+        run: |
+          if [ ! -d "themes/butterfly" ]; then
+            echo "ERROR: themes/butterfly directory not found!"
+            exit 1
+          fi
+          echo "Butterfly theme directory OK"
+          ls themes/butterfly/_config.yml && echo "Theme config OK"
+
       - name: Generate & Deploy
         env:
           GIT_DEPLOY_REPO: https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Fcmmm/Fcmmm.github.io.git

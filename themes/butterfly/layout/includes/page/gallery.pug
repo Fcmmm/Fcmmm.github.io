@@ -143,7 +143,7 @@ script.
         html +=
           '<div class="gallery-grid-item">' +
           '<a href="' + url + '" data-fancybox="gallery">' +
-          '<img src="' + url + '" alt="gallery-' + i + '" loading="' + (i < 8 ? 'eager' : 'lazy') + '" />' +
+          '<img s' + 'rc="' + url + '" alt="gallery-' + i + '" loading="' + (i < 8 ? 'eager' : 'lazy') + '" />' +
           '</a>' +
           '</div>'
       })
@@ -153,6 +153,11 @@ script.
       // 重新绑定 Fancybox
       if (typeof Fancybox !== 'undefined') {
         Fancybox.bind('[data-fancybox="gallery"]')
+      }
+
+      // 触发懒加载更新（兼容 Hexo lazyload 插件）
+      if (typeof lazyLoadInstance !== 'undefined' && lazyLoadInstance.update) {
+        lazyLoadInstance.update()
       }
 
       // 图片加载失败时添加重试机制
