@@ -1,6 +1,11 @@
 link(rel='stylesheet' href=url_for(theme.asset.aplayer_css) media="print" onload="this.media='all'")
 script(src=url_for(theme.asset.aplayer_js))
 script(src=url_for(theme.asset.meting_js))
+script.
+  // 首次加载时自动初始化所有 meting-js 元素
+  if (typeof loadMeting === 'function') {
+    loadMeting()
+  }
 if theme.pjax.enable
   script.
     (() => {
