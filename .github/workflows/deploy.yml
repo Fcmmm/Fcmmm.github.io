@@ -37,7 +37,7 @@ jobs:
           echo "${{ secrets.ALIYUN_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H -p "${{ secrets.ALIYUN_PORT }}" "${{ secrets.ALIYUN_HOST }}" >> ~/.ssh/known_hosts
-          rsync -az --delete \
+          rsync -az --delete --ignore-errors \
             -e "ssh -p ${{ secrets.ALIYUN_PORT }}" \
             public/ \
             ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_HOST }}:/www/wwwroot/fcmmm.xyz/main/
