@@ -1,11 +1,8 @@
 link(rel='stylesheet' href=url_for(theme.asset.aplayer_css) media="print" onload="this.media='all'")
 script(src=url_for(theme.asset.aplayer_js))
 script(src=url_for(theme.asset.meting_js))
-script.
-  // 首次加载时自动初始化所有 meting-js 元素
-  if (typeof loadMeting === 'function') {
-    loadMeting()
-  }
+//- MetingJS v2 是 Web Component，customElements.define() 时自动升级已有元素
+//- APlayer 在 meting_js 之前加载，connectedCallback 时 window.APlayer 已就绪
 if theme.pjax.enable
   script.
     (() => {
@@ -19,10 +16,7 @@ if theme.pjax.enable
         }
       }
 
-      const runMetingJS = () => {
-        typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
-      }
-
+      // MetingJS v2 是 Web Component，PJAX 加载新页面时浏览器自动升级 <meting-js>
+      // 只需在离开页面时销毁旧实例
       btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
-      btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
     })()

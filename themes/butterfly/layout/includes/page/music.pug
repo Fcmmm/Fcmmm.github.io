@@ -19,7 +19,7 @@
         server="netease"
         type="playlist"
         id=page.playlist || '7455412811'
-        api="https://api.injahow.cn/meting/"
+        api="https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&r=:r"
         fixed="false"
         mini="false"
         autoplay="false"
@@ -28,9 +28,9 @@
         order="random"
         preload="auto"
         volume="0.7"
-        list-folded="false"
-        list-max-height="600px"
-        lrc-type="1"
+        list-folded="true"
+        list-max-height="400px"
+        lrc-type="3"
       )
 
     .music-info
@@ -67,7 +67,7 @@ script.
     meting.setAttribute('server', 'netease');
     meting.setAttribute('type', 'playlist');
     meting.setAttribute('id', '#{page.playlist || "7455412811"}');
-    meting.setAttribute('api', 'https://api.injahow.cn/meting/');
+    meting.setAttribute('api', 'https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&r=:r');
     meting.setAttribute('fixed', 'false');
     meting.setAttribute('mini', 'false');
     meting.setAttribute('autoplay', 'false');
@@ -76,23 +76,51 @@ script.
     meting.setAttribute('order', 'random');
     meting.setAttribute('preload', 'auto');
     meting.setAttribute('volume', '0.7');
-    meting.setAttribute('list-folded', 'false');
-    meting.setAttribute('list-max-height', '600px');
-    meting.setAttribute('lrc-type', '1');
+    meting.setAttribute('list-folded', 'true');
+    meting.setAttribute('list-max-height', '400px');
+    meting.setAttribute('lrc-type', '3');
     wrap.appendChild(meting);
-    if (typeof loadMeting === 'function') {
-      setTimeout(function() { loadMeting(); }, 200);
-    }
+    // MetingJS v2 是 Web Component，appendChild 会自动触发 connectedCallback 初始化
     setTimeout(function() {
       btn.textContent = ' 刷新歌单';
       btn.disabled = false;
     }, 1500);
   }
 
-  // 首次加载时手动初始化 MetingJS
-  if (typeof loadMeting === 'function') {
-    setTimeout(function() { loadMeting(); }, 300);
-  }
+  // 监听 APlayer 创建，启用歌词并处理布局
+  var musicObserver = new MutationObserver(function (mutations) {
+    mutations.forEach(function (m) {
+      m.addedNodes.forEach(function (node) {
+        if (node.classList && node.classList.contains('aplayer')) {
+          node.classList.add('aplayer-withlrc')
+          // 监听歌词内容加载
+          var lrcObserver = new MutationObserver(function () {
+            var lrc = node.querySelector('.aplayer-lrc')
+            var content = node.querySelector('.aplayer-lrc-content')
+            if (lrc && content && content.children.length > 0) {
+              lrc.style.display = 'block'
+              lrc.style.height = 'auto'
+              lrc.style.maxHeight = '180px'
+              lrc.style.overflowY = 'auto'
+              content.style.display = 'block'
+            }
+          })
+          lrcObserver.observe(node, { childList: true, subtree: true })
+          // 初始检查
+          var lrc = node.querySelector('.aplayer-lrc')
+          var content = node.querySelector('.aplayer-lrc-content')
+          if (lrc && content && content.children.length > 0) {
+            lrc.style.display = 'block'
+            lrc.style.height = 'auto'
+            lrc.style.maxHeight = '180px'
+            lrc.style.overflowY = 'auto'
+            content.style.display = 'block'
+          }
+        }
+      })
+    })
+  })
+  musicObserver.observe(document.getElementById('music-player-wrap'), { childList: true, subtree: true })
 
 style.
   #music-page { max-width: 900px; margin: 0 auto; padding: 0 16px; }
@@ -111,8 +139,7 @@ style.
   .music-wave span:nth-child(5) { animation-delay: .8s; }
   @keyframes waveAnim { 0%, 100% { height: 12px; } 50% { height: 28px; } }
   .music-container { background: var(--card-bg, #fff); border-radius: 16px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,.06); }
-  #music-player-wrap { border-radius: 12px; overflow: hidden; }
-  #music-player-wrap meting-js { display: block; min-height: 400px; }
+  #music-player-wrap { border-radius: 12px; }
   #music-player-wrap .aplayer { background: var(--card-bg, #fff) !important; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
   #music-player-wrap .aplayer .aplayer-list ol li { border-top: 1px solid var(--border-color, #f0f0f0) !important; }
   #music-player-wrap .aplayer .aplayer-list ol li:hover { background: rgba(73,177,245,.05) !important; }

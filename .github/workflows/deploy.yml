@@ -2,8 +2,7 @@ name: Deploy Blog
 
 on:
   push:
-    branches:
-      - source
+    branches: [source]
 
 jobs:
   build-and-deploy:
@@ -11,8 +10,6 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
-        with:
-          submodules: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -22,21 +19,25 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Verify theme
-        run: |
-          if [ ! -d "themes/butterfly" ]; then
-            echo "ERROR: themes/butterfly directory not found!"
-            exit 1
-          fi
-          echo "Butterfly theme directory OK"
-          ls themes/butterfly/_config.yml && echo "Theme config OK"
+      - name: Build Hexo
+        run: npx hexo generate
 
-      - name: Generate & Deploy
-        env:
-          GIT_DEPLOY_REPO: https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Fcmmm/Fcmmm.github.io.git
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: main
+          force_orphan: true
+          commit_message: 'deploy: ${{ github.event.head_commit.message }}'
+
+      - name: Deploy to Aliyun
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          npx hexo generate
-          rm -rf .deploy_git
-          npx hexo deploy --repo "$GIT_DEPLOY_REPO"
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ALIYUN_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H -p "${{ secrets.ALIYUN_PORT }}" "${{ secrets.ALIYUN_HOST }}" >> ~/.ssh/known_hosts
+          rsync -az --delete \
+            -e "ssh -p ${{ secrets.ALIYUN_PORT }}" \
+            public/ \
+            ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_HOST }}:/www/wwwroot/fcmmm.xyz/main/

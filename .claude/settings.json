@@ -68,7 +68,14 @@
       "Bash(git -C .deploy_git branch -a)",
       "Bash(cmd.exe /c \"rmdir /s /q f:\\\\IDEA_project\\\\Blog02\\\\.deploy_git\")",
       "Bash(git -C \"f:/IDEA_project/Blog02/.deploy_git\" log --oneline -3)",
-      "Bash(git -C \"f:/IDEA_project/Blog02/.deploy_git\" show --stat HEAD)"
+      "Bash(git -C \"f:/IDEA_project/Blog02/.deploy_git\" show --stat HEAD)",
+      "WebFetch(domain:fcmmm.xyz)",
+      "Bash(curl -s \"https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js\")",
+      "Bash(curl -sI \"https://api.injahow.cn/meting/?server=netease&type=playlist&id=2309860218\")",
+      "Bash(curl -s \"https://api.injahow.cn/meting/?server=netease&type=playlist&id=2309860218\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); print\\(json.dumps\\(data[0], indent=2, ensure_ascii=False\\)\\)\")",
+      "Bash(curl -s \"https://api.injahow.cn/meting/?server=netease&type=lrc&id=3413895\")",
+      "Bash(curl -s \"https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css\")"
     ],
     "additionalDirectories": [
       "f:\\IDEA_project\\Blog02\\themes\\butterfly\\.git"

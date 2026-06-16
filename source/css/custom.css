@@ -58,6 +58,17 @@ figure.highlight {
   transform: none !important;
 }
 
+/* Music button in rightside panel */
+#rightside-music-btn {
+  background: #49B1F5 !important;
+  color: #fff !important;
+}
+
+#rightside-music-btn:hover {
+  background: #3a8fd4 !important;
+  transform: scale(1.08);
+}
+
 /* Go up button animation */
 #go-up:hover {
   transform: translateY(-3px);
