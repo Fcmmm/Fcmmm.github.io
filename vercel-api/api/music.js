@@ -1,5 +1,14 @@
 // Meting-compatible API — 用你自己的 MUSIC_U Cookie 代理网易云请求
 export default async function handler(req, res) {
+  // CORS — 允许博客页面跨域请求
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end()
+  }
+
   const { server, type, id } = req.query
 
   if (!server || !type || !id) {
