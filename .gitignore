@@ -4,5 +4,6 @@ db.json
 *.log
 node_modules/
 public/
+source/img/gallery/
 .deploy*/
 _multiconfig.yml.deploy_git/
