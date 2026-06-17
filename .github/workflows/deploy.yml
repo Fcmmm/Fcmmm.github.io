@@ -50,7 +50,7 @@ jobs:
             ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_HOST }}:/www/wwwroot/fcmmm.xyz/server/
           ssh -p ${{ secrets.ALIYUN_PORT }} ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_HOST }} "\
             echo 'GALLERY_PASSWORD=${{ secrets.GALLERY_PASSWORD }}' > /www/wwwroot/fcmmm.xyz/server/.env && \
-            echo 'IMAGE_URLS=${{ secrets.IMAGE_URLS }}' >> /www/wwwroot/fcmmm.xyz/server/.env && \
+            echo 'IMAGE_URLS=' >> /www/wwwroot/fcmmm.xyz/server/.env && \
             chmod 600 /www/wwwroot/fcmmm.xyz/server/.env && \
             echo '.env file created'"
 
