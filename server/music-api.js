@@ -112,8 +112,23 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(401, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ error: '密码错误' }))
     }
+
+    // 1. 扫描服务器上的图库图片目录
+    const GALLERY_DIR = process.env.GALLERY_DIR || '/www/wwwroot/fcmmm.xyz/gallery-files'
+    let dirImages = []
+    try {
+      if (fs.existsSync(GALLERY_DIR)) {
+        dirImages = fs.readdirSync(GALLERY_DIR)
+          .filter(f => /\.(jpg|jpeg|png|gif|webp|mp4|webm)$/i.test(f))
+          .map(f => `/gallery-files/${f}`)
+      }
+    } catch (_) { /* 目录读取失败，跳过 */ }
+
+    // 2. 合并 IMAGE_URLS 中的图片（兼容旧有 Cloudinary 链接）
     const raw = process.env.IMAGE_URLS || ''
-    const images = raw.split(',').map(s => s.trim()).filter(Boolean)
+    const envImages = raw.split(',').map(s => s.trim()).filter(Boolean)
+
+    const images = [...dirImages, ...envImages]
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' })
     return res.end(JSON.stringify({ images }))
   }

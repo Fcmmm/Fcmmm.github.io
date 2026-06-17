@@ -1,13 +1,6 @@
 # 私密图库配置
-# Worker 部署后，将下方 URL 替换为实际的 workers.dev 地址
+# 图片不再通过 GitHub 仓库管理，改为上传至服务器 /www/wwwroot/fcmmm.xyz/gallery-files/
+# API 会自动扫描该目录并返回图片列表
 worker_url: "https://fcmmm.xyz/api/gallery"
-# 图库图片列表（由后台管理自动维护）
-# 可在此手动添加图片 URL（完整 URL 或 /img/gallery/ 下的相对路径）
-images:
-  - /img/gallery/1780908744234______.jpg
-  - /img/gallery/1780908773557______20260601184229_39_189.jpg
-  - /img/gallery/1781148539041_2026_6_11__10_43_53.png
-  - /img/gallery/1781181919471__1.jpg
-  - /img/gallery/1781181928947__2.jpg
-  - /img/gallery/1781181976809__2.mp4
-  - /img/gallery/1781182473915__1.mp4
+# 下方图片列表仅在 API 不可用时作为兜底
+images: []
