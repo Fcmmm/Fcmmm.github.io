@@ -3,19 +3,20 @@ script(src=url_for(theme.asset.aplayer_js))
 script(src=url_for(theme.asset.meting_js))
 
 //- 全局悬浮迷你播放器
-meting-js#music-float-player(
-  server="netease"
-  type="playlist"
-  id="2309860218"
-  api="https://fcmmm.xyz/api/music?server=:server&type=:type&id=:id"
-  fixed="true"
-  mini="true"
-  autoplay="false"
-  theme="#49B1F5"
-  loop="all"
-  order="random"
-  volume="0.7"
-)
+#music-float-player
+  meting-js(
+    server="netease"
+    type="playlist"
+    id="2309860218"
+    api="https://fcmmm.xyz/api/music?server=:server&type=:type&id=:id"
+    fixed="true"
+    mini="true"
+    autoplay="false"
+    theme="#49B1F5"
+    loop="all"
+    order="random"
+    volume="0.7"
+  )
 
 if theme.pjax.enable
   script.
