@@ -54,11 +54,8 @@ jobs:
             chmod 600 /www/server/music-api/.env && \
             echo '.env file created'"
 
-      - name: Restart API server
+      - name: Notify manual restart
         run: |
-          ssh -p ${{ secrets.ALIYUN_PORT }} ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_HOST }} "\
-            cd /www/server/music-api && \
-            export \$(grep -v '^#' .env | xargs) 2>/dev/null; \
-            pkill -f 'node.*music-api' 2>/dev/null; sleep 1; \
-            nohup node music-api.js > /dev/null 2>&1 & \
-            sleep 1; echo 'Server restarted OK'"
+          echo "⚠️  server/music-api.js 已更新，请在宝塔终端手动重启:"
+          echo "    pkill -f 'node.*music-api'"
+          echo "    nohup node /www/server/music-api/music-api.js > /dev/null 2>&1 &"
