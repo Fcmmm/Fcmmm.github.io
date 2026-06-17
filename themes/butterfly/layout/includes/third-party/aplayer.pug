@@ -3,6 +3,61 @@ script(src=url_for(theme.asset.aplayer_js))
 script(src=url_for(theme.asset.meting_js))
 //- MetingJS v2 是 Web Component，customElements.define() 时自动升级已有元素
 //- APlayer 在 meting_js 之前加载，connectedCallback 时 window.APlayer 已就绪
+//- 全局悬浮播放器 — 固定在右下角，跨页面不中断
+#music-float-player
+  meting-js(
+    server="netease"
+    type="playlist"
+    id="2309860218"
+    api="https://fcmmm.xyz/api/music?server=:server&type=:type&id=:id"
+    fixed="true"
+    mini="true"
+    autoplay="false"
+    theme="#49B1F5"
+    loop="all"
+    order="random"
+    volume="0.7"
+    list-folded="true"
+    lrc-type="3"
+  )
+style.
+  #music-float-player {
+    position: fixed;
+    right: 10px;
+    bottom: 90px;
+    z-index: 99;
+  }
+  #music-float-player .aplayer {
+    background: var(--card-bg, #fff) !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.15);
+    margin: 0 !important;
+  }
+  #music-float-player .aplayer.aplayer-fixed {
+    position: static !important;
+  }
+  #music-float-player .aplayer .aplayer-body {
+    padding-right: 12px !important;
+  }
+  #music-float-player .aplayer .aplayer-list {
+    display: none !important;
+  }
+  @media screen and (max-width: 768px) {
+    #music-float-player {
+      right: 4px;
+      bottom: 70px;
+    }
+  }
+script.
+  // 等 MetingJS 加载完成后强制浮窗播放器使用迷你模式
+  setTimeout(function () {
+    var fp = document.querySelector('#music-float-player .aplayer')
+    if (fp) {
+      fp.style.position = 'static'
+      fp.style.margin = '0'
+    }
+  }, 800)
+
 if theme.pjax.enable
   script.
     (() => {
@@ -17,6 +72,6 @@ if theme.pjax.enable
       }
 
       // MetingJS v2 是 Web Component，PJAX 加载新页面时浏览器自动升级 <meting-js>
-      // 只需在离开页面时销毁旧实例
+      // 只需在离开页面时销毁旧的非 fixed 实例
       btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
     })()
