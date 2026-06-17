@@ -1,4 +1,4 @@
-//- 音乐馆 — 网易云音乐 + APlayer + MetingJS
+//- 音乐馆 — 播放列表 + 右下角悬浮播放器
 #music-page
   .music-hero
     .music-hero-content
@@ -14,32 +14,14 @@
         span
 
   .music-container
-    #music-player-wrap
-      meting-js(
-        server="netease"
-        type="playlist"
-        id=page.playlist || '7455412811'
-        api="https://fcmmm.xyz/api/music?server=:server&type=:type&id=:id"
-        fixed="false"
-        mini="false"
-        autoplay="false"
-        theme="#49B1F5"
-        loop="all"
-        order="random"
-        preload="auto"
-        volume="0.7"
-        list-folded="true"
-        list-max-height="400px"
-      )
-
+    #music-playlist-wrap
+      .music-playlist-loading 加载歌单中...
     .music-info
       .music-info-card
         .music-info-header
           h3  关于音乐馆
-          button#music-refresh-btn.music-refresh-btn(onclick="refreshPlaylist()")  刷新歌单
         p 这里展示的是我在网易云音乐的「我喜欢的音乐」歌单，数据实时同步。
-        p 播放器支持：歌单切换、歌词显示、循环模式、音量调节等功能。
-        p.music-note  提示：如遇加载失败，请点击刷新歌单按钮或刷新页面。
+        p 点击歌曲即可播放；切换页面不会中断播放。
         .music-stats
           .music-stat-item
             span.music-stat-icon &#127926;
@@ -50,52 +32,6 @@
           .music-stat-item
             span.music-stat-icon &#128260;
             span 歌词显示
-
-script.
-  function refreshPlaylist() {
-    var btn = document.getElementById('music-refresh-btn');
-    var wrap = document.getElementById('music-player-wrap');
-    if (!wrap) return;
-    btn.textContent = '⏳ 加载中...';
-    btn.disabled = true;
-    var oldMeting = wrap.querySelector('meting-js');
-    if (oldMeting) oldMeting.remove();
-    var oldAplayer = wrap.querySelector('.aplayer');
-    if (oldAplayer) oldAplayer.remove();
-    var meting = document.createElement('meting-js');
-    meting.setAttribute('server', 'netease');
-    meting.setAttribute('type', 'playlist');
-    meting.setAttribute('id', '#{page.playlist || "7455412811"}');
-    meting.setAttribute('api', 'https://fcmmm.xyz/api/music?server=:server&type=:type&id=:id');
-    meting.setAttribute('fixed', 'false');
-    meting.setAttribute('mini', 'false');
-    meting.setAttribute('autoplay', 'false');
-    meting.setAttribute('theme', '#49B1F5');
-    meting.setAttribute('loop', 'all');
-    meting.setAttribute('order', 'random');
-    meting.setAttribute('preload', 'auto');
-    meting.setAttribute('volume', '0.7');
-    meting.setAttribute('list-folded', 'true');
-    meting.setAttribute('list-max-height', '400px');
-    wrap.appendChild(meting);
-    // MetingJS v2 是 Web Component，appendChild 会自动触发 connectedCallback 初始化
-    setTimeout(function() {
-      btn.textContent = ' 刷新歌单';
-      btn.disabled = false;
-    }, 1500);
-  }
-
-  // 监听 APlayer 创建，添加 lrc 支持
-  var musicObserver = new MutationObserver(function (mutations) {
-    mutations.forEach(function (m) {
-      m.addedNodes.forEach(function (node) {
-        if (node.classList && node.classList.contains('aplayer')) {
-          node.classList.add('aplayer-withlrc')
-        }
-      })
-    })
-  })
-  musicObserver.observe(document.getElementById('music-player-wrap'), { childList: true, subtree: true })
 
 style.
   #music-page { max-width: 900px; margin: 0 auto; padding: 0 16px; }
@@ -114,35 +50,129 @@ style.
   .music-wave span:nth-child(5) { animation-delay: .8s; }
   @keyframes waveAnim { 0%, 100% { height: 12px; } 50% { height: 28px; } }
   .music-container { background: var(--card-bg, #fff); border-radius: 16px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,.06); }
-  #music-player-wrap { border-radius: 12px; }
-  #music-player-wrap .aplayer { background: var(--card-bg, #fff) !important; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-  #music-player-wrap .aplayer .aplayer-list ol li { border-top: 1px solid var(--border-color, #f0f0f0) !important; }
-  #music-player-wrap .aplayer .aplayer-list ol li:hover { background: rgba(73,177,245,.05) !important; }
-  #music-player-wrap .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(73,177,245,.08) !important; }
-  #music-player-wrap .aplayer .aplayer-info .aplayer-music { color: var(--font-color, #333) !important; }
-  #music-player-wrap .aplayer .aplayer-lrc { color: var(--font-color, #666) !important; }
-  #music-player-wrap .aplayer .aplayer-lrc:before, #music-player-wrap .aplayer .aplayer-lrc:after { background: var(--card-bg, #fff) !important; }
+  .music-playlist-loading { text-align:center; padding:40px; color:#999; }
+  /* 播放列表每一项 */
+  .music-song-item {
+    display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+    border-radius: 10px; cursor: pointer; transition: background .2s;
+    border-bottom: 1px solid var(--border-color, #f0f0f0);
+  }
+  .music-song-item:hover { background: rgba(73,177,245,.06); }
+  .music-song-item.playing { background: rgba(73,177,245,.12); }
+  .music-song-index { width: 28px; text-align: center; font-size: 13px; color: #999; flex-shrink: 0; }
+  .music-song-item.playing .music-song-index { color: #49B1F5; font-weight: 700; }
+  .music-song-info { flex: 1; min-width: 0; }
+  .music-song-name { font-size: 14px; font-weight: 500; color: var(--font-color, #333); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .music-song-item.playing .music-song-name { color: #49B1F5; }
+  .music-song-artist { font-size: 12px; color: #999; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .music-song-duration { font-size: 12px; color: #bbb; flex-shrink: 0; width: 40px; text-align: right; }
   .music-info { margin-top: 20px; }
   .music-info-card { background: var(--card-bg, #fff); border-radius: 12px; padding: 20px 24px; border: 1px solid var(--border-color, #f0f0f0); }
   .music-info-card h3 { font-size: 16px; margin: 0 0 12px; color: var(--font-color, #333); }
   .music-info-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .music-info-header h3 { margin: 0 !important; }
-  .music-refresh-btn { display: inline-flex; align-items: center; gap: 4px; padding: 8px 16px; background: #49B1F5; color: #fff; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; transition: background .2s, transform .2s; white-space: nowrap; }
-  .music-refresh-btn:hover { background: #3a8fd4; transform: scale(1.03); }
-  .music-refresh-btn:disabled { opacity: .7; cursor: not-allowed; transform: none; }
   .music-info-card p { font-size: 13px; color: #999; margin: 0 0 6px; line-height: 1.6; }
-  .music-note { font-style: italic; }
   .music-stats { display: flex; gap: 24px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color, #f0f0f0); }
   .music-stat-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #888; }
   .music-stat-icon { font-size: 16px; }
-  [data-theme="dark"] #music-player-wrap .aplayer { background: #1e1e1e !important; }
   [data-theme="dark"] .music-container { background: #1e1e1e; }
   [data-theme="dark"] .music-info-card { background: #1e1e1e; border-color: #333; }
-  [data-theme="dark"] #music-player-wrap .aplayer .aplayer-list ol li { border-top-color: #333 !important; }
-  [data-theme="dark"] #music-player-wrap .aplayer .aplayer-lrc:before, [data-theme="dark"] #music-player-wrap .aplayer .aplayer-lrc:after { background: #1e1e1e !important; }
+  [data-theme="dark"] .music-song-item { border-bottom-color: #333; }
   @media screen and (max-width: 768px) {
     .music-hero { padding: 32px 16px 24px; border-radius: 12px; }
     .music-hero h1 { font-size: 24px; }
     .music-container { padding: 10px; border-radius: 12px; }
     .music-stats { gap: 16px; flex-wrap: wrap; }
+    .music-song-item { padding: 8px 8px; gap: 8px; }
   }
+
+script.
+  var PLAYLIST_ID = '#{page.playlist || "2309860218"}'
+  var API_BASE = 'https://fcmmm.xyz/api/music?server=netease'
+
+  // 等待悬浮窗 APlayer 就绪
+  function waitForAPlayer(cb, tries) {
+    tries = tries || 0
+    if (tries > 50) return
+    if (window.aplayers && window.aplayers.length) {
+      // 找 fixed 那个（悬浮窗）
+      var ap = window.aplayers.find(function (p) { return p.options.fixed })
+      if (ap) return cb(ap)
+    }
+    setTimeout(function () { waitForAPlayer(cb, tries + 1) }, 200)
+  }
+
+  function formatTime(sec) {
+    if (!sec || isNaN(sec)) return '--:--'
+    var m = Math.floor(sec / 60)
+    var s = Math.floor(sec % 60)
+    return m + ':' + (s < 10 ? '0' : '') + s
+  }
+
+  // 渲染播放列表
+  function renderPlaylist(songs, aplayer) {
+    var wrap = document.getElementById('music-playlist-wrap')
+    if (!songs.length) {
+      wrap.innerHTML = '<p class="music-playlist-loading">暂无歌曲</p>'
+      return
+    }
+    var html = ''
+    songs.forEach(function (song, i) {
+      html += '<div class="music-song-item" data-index="' + i + '">'
+      html += '<span class="music-song-index">' + (i + 1) + '</span>'
+      html += '<div class="music-song-info">'
+      html += '<div class="music-song-name">' + song.name + '</div>'
+      html += '<div class="music-song-artist">' + song.artist + '</div>'
+      html += '</div>'
+      html += '<span class="music-song-duration">' + formatTime(song.duration) + '</span>'
+      html += '</div>'
+    })
+    wrap.innerHTML = html
+
+    // 点击播放
+    wrap.querySelectorAll('.music-song-item').forEach(function (item) {
+      item.addEventListener('click', function () {
+        var idx = parseInt(this.dataset.index)
+        aplayer.list.switch(idx)
+        aplayer.play()
+        // 如果悬浮窗是折叠的，展开一下
+        var fp = document.getElementById('music-float-player')
+        if (fp) fp.style.opacity = '1'
+      })
+    })
+
+    // 高亮当前播放
+    function updateActive() {
+      var cur = aplayer.list.index
+      wrap.querySelectorAll('.music-song-item').forEach(function (item, i) {
+        item.classList.toggle('playing', i === cur)
+      })
+    }
+    aplayer.on('listswitch', updateActive)
+    updateActive()
+  }
+
+  // 从 API 拉取歌单
+  function fetchPlaylist() {
+    fetch(API_BASE + '&type=playlist&id=' + PLAYLIST_ID)
+      .then(function (r) { return r.json() })
+      .then(function (songs) {
+        if (songs.error) throw new Error(songs.error)
+        waitForAPlayer(function (ap) {
+          // 将歌曲注入 APlayer（如果还没注入过）
+          if (!ap.list.audios || !ap.list.audios.length || ap.list.audios.length !== songs.length) {
+            ap.list.clear()
+            songs.forEach(function (s) { ap.list.add([s]) })
+          }
+          renderPlaylist(songs, ap)
+        })
+      })
+      .catch(function (e) {
+        document.getElementById('music-playlist-wrap').innerHTML =
+          '<p class="music-playlist-loading">歌单加载失败：' + e.message + '</p>'
+      })
+  }
+
+  // 启动：等 APlayer 就绪后拉歌单
+  waitForAPlayer(function () {
+    fetchPlaylist()
+  })
