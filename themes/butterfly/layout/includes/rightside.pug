@@ -40,7 +40,7 @@ mixin rightsideItem(array)
     if hideArray
       +rightsideItem(hideArray)
   #rightside-config-show
-    button#rightside-music-btn(type="button" title="音乐馆" onclick="window.location.href='/music/'")
+    button#rightside-music-btn(type="button" title="音乐馆" onclick="window.pjax.loadUrl('/music/')")
       i.fas.fa-music
     if enable
       if hide
