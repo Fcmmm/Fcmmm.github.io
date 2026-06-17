@@ -1,9 +1,7 @@
 link(rel='stylesheet' href=url_for(theme.asset.aplayer_css) media="print" onload="this.media='all'")
 script(src=url_for(theme.asset.aplayer_js))
 script(src=url_for(theme.asset.meting_js))
-//- MetingJS v2 是 Web Component，customElements.define() 时自动升级已有元素
-//- APlayer 在 meting_js 之前加载，connectedCallback 时 window.APlayer 已就绪
-//- 全局悬浮播放器 — 固定在右下角，跨页面不中断
+//- 右下角悬浮音乐播放器 — 可拖动，跨页面不中断
 #music-float-player
   meting-js(
     server="netease"
@@ -20,43 +18,162 @@ script(src=url_for(theme.asset.meting_js))
     list-folded="true"
     lrc-type="3"
   )
+
 style.
   #music-float-player {
     position: fixed;
-    right: 10px;
-    bottom: 90px;
-    z-index: 99;
+    right: 16px;
+    bottom: 120px;
+    z-index: 999;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
   }
+  #music-float-player:active { cursor: grabbing; }
   #music-float-player .aplayer {
-    background: var(--card-bg, #fff) !important;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,.15);
+    background: rgba(255,255,255,.95) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 50px !important;
+    box-shadow: 0 4px 24px rgba(0,0,0,.12);
+    padding: 6px 18px 6px 6px !important;
     margin: 0 !important;
+    height: auto !important;
+    width: auto !important;
   }
   #music-float-player .aplayer.aplayer-fixed {
     position: static !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
   }
-  #music-float-player .aplayer .aplayer-body {
-    padding-right: 12px !important;
+  /* 圆形封面 */
+  #music-float-player .aplayer .aplayer-pic {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    overflow: hidden;
+    margin: 0 !important;
+    flex-shrink: 0;
   }
-  #music-float-player .aplayer .aplayer-list {
-    display: none !important;
+  #music-float-player .aplayer .aplayer-pic img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    border-radius: 50% !important;
   }
+  /* 精简信息区 — 只显示歌名歌手 */
+  #music-float-player .aplayer .aplayer-info {
+    margin-left: 10px !important;
+    height: auto !important;
+    padding: 0 !important;
+    flex: 0 1 auto;
+    max-width: 140px;
+    border: none !important;
+  }
+  #music-float-player .aplayer .aplayer-music {
+    font-size: 13px !important;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #333 !important;
+    margin: 0 !important;
+  }
+  #music-float-player .aplayer .aplayer-music .aplayer-author {
+    font-size: 11px !important;
+    color: #999 !important;
+    display: block;
+    margin-top: 1px;
+  }
+  #music-float-player .aplayer .aplayer-controller {
+    margin-left: 8px !important;
+    display: flex !important;
+    align-items: center;
+    gap: 2px;
+  }
+  #music-float-player .aplayer .aplayer-icon {
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: opacity .2s;
+  }
+  #music-float-player .aplayer .aplayer-icon:hover { opacity: 1; }
+  #music-float-player .aplayer .aplayer-icon svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  /* 隐藏进度条、音量、菜单等 */
+  #music-float-player .aplayer .aplayer-lrc,
+  #music-float-player .aplayer .aplayer-list,
+  #music-float-player .aplayer .aplayer-volume,
+  #music-float-player .aplayer .aplayer-icon-order,
+  #music-float-player .aplayer .aplayer-icon-loop,
+  #music-float-player .aplayer .aplayer-icon-menu,
+  #music-float-player .aplayer .aplayer-icon-lrc,
+  #music-float-player .aplayer .aplayer-bar-wrap,
+  #music-float-player .aplayer .aplayer-time { display: none !important; }
+  /* 暗色模式 */
+  [data-theme="dark"] #music-float-player .aplayer {
+    background: rgba(30,30,30,.95) !important;
+  }
+  [data-theme="dark"] #music-float-player .aplayer .aplayer-music { color: #eee !important; }
   @media screen and (max-width: 768px) {
-    #music-float-player {
-      right: 4px;
-      bottom: 70px;
-    }
+    #music-float-player { right: 8px; bottom: 90px; }
+    #music-float-player .aplayer .aplayer-info { max-width: 100px; }
   }
+
 script.
-  // 等 MetingJS 加载完成后强制浮窗播放器使用迷你模式
-  setTimeout(function () {
-    var fp = document.querySelector('#music-float-player .aplayer')
-    if (fp) {
-      fp.style.position = 'static'
-      fp.style.margin = '0'
+  // 拖动功能
+  (function () {
+    var el = document.getElementById('music-float-player')
+    if (!el) return
+    var isDragging = false, startX, startY, startLeft, startTop
+    var rect
+
+    function onDown(e) {
+      if (e.target.closest('.aplayer-icon') || e.target.closest('button') || e.target.closest('input')) return
+      isDragging = true
+      rect = el.getBoundingClientRect()
+      var t = e.touches ? e.touches[0] : e
+      startX = t.clientX
+      startY = t.clientY
+      startLeft = rect.left
+      startTop = rect.top
+      el.style.transition = 'none'
+      e.preventDefault()
     }
-  }, 800)
+
+    function onMove(e) {
+      if (!isDragging) return
+      var t = e.touches ? e.touches[0] : e
+      var dx = t.clientX - startX
+      var dy = t.clientY - startY
+      var newRight = window.innerWidth - (startLeft + rect.width) - dx
+      var newBottom = window.innerHeight - (startTop + rect.height) - dy
+      // 限制在屏幕内
+      newRight = Math.max(4, Math.min(newRight, window.innerWidth - rect.width - 4))
+      newBottom = Math.max(4, Math.min(newBottom, window.innerHeight - rect.height - 4))
+      el.style.right = newRight + 'px'
+      el.style.bottom = newBottom + 'px'
+    }
+
+    function onUp() {
+      if (!isDragging) return
+      isDragging = false
+      el.style.transition = ''
+    }
+
+    el.addEventListener('mousedown', onDown)
+    el.addEventListener('touchstart', onDown, { passive: false })
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('touchmove', onMove, { passive: false })
+    document.addEventListener('mouseup', onUp)
+    document.addEventListener('touchend', onUp)
+  })()
 
 if theme.pjax.enable
   script.
@@ -70,8 +187,5 @@ if theme.pjax.enable
           }
         }
       }
-
-      // MetingJS v2 是 Web Component，PJAX 加载新页面时浏览器自动升级 <meting-js>
-      // 只需在离开页面时销毁旧的非 fixed 实例
       btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
     })()
