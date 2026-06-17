@@ -60,5 +60,5 @@ jobs:
             cd /www/server/music-api && \
             export \$(grep -v '^#' .env | xargs) 2>/dev/null; \
             pkill -f 'node.*music-api' 2>/dev/null; sleep 1; \
-            nohup node music-api.js > /dev/null 2>&1 &; \
-            echo 'Server restarted OK'"
+            nohup node music-api.js > /dev/null 2>&1 & \
+            sleep 1; echo 'Server restarted OK'"
