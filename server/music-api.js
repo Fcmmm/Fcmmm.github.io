@@ -87,14 +87,41 @@ const server = http.createServer(async (req, res) => {
           res.writeHead(500, { 'Content-Type': 'application/json' })
           return res.end(JSON.stringify({ error: 'Playlist fetch failed' }))
         }
-        const baseUrl = `http://127.0.0.1:${PORT}/?server=netease`
-        const songs = (d.result.tracks || []).filter(t => t.id).map(t => ({
-          name: t.name || '',
-          artist: (t.ar || []).map(a => a.name).join(' / ') || '未知歌手',
-          url: `${baseUrl}&type=url&id=${t.id}`,
-          pic: t.al?.picUrl || (t.al?.picId ? `https://p2.music.126.net/${t.al.picId}.jpg?param=300y300` : ''),
-          lrc: `${baseUrl}&type=lrc&id=${t.id}`
-        }))
+        const baseUrl = 'https://fcmmm.xyz/api/music?server=netease'
+
+        // 调试：打印第一条歌曲的原始结构
+        if (d.result.tracks && d.result.tracks[0]) {
+          console.log('First track ar:', JSON.stringify(d.result.tracks[0].ar))
+          console.log('First track al:', JSON.stringify(d.result.tracks[0].al))
+        }
+
+        const songs = (d.result.tracks || []).filter(t => t.id).map(t => {
+          // 歌手 — Netease API 字段是 ar (array of {name})
+          let artist = '未知歌手'
+          if (t.ar && t.ar.length) {
+            artist = t.ar.map(a => a.name).join(' / ')
+          } else if (t.artists && t.artists.length) {
+            artist = t.artists.map(a => a.name).join(' / ')
+          }
+
+          // 封面 — 优先 picUrl，其次根据 picId 拼 CDN 地址
+          let pic = ''
+          if (t.al && t.al.picUrl) {
+            pic = t.al.picUrl
+          } else if (t.al && t.al.picId) {
+            pic = `https://p2.music.126.net/${t.al.picId}.jpg?param=300y300`
+          } else if (t.album && t.album.picUrl) {
+            pic = t.album.picUrl
+          }
+
+          return {
+            name: t.name || '',
+            artist: artist,
+            url: `${baseUrl}&type=url&id=${t.id}`,
+            pic: pic,
+            lrc: `${baseUrl}&type=lrc&id=${t.id}`
+          }
+        })
         res.writeHead(200, {
           'Content-Type': 'application/json; charset=utf-8',
           'Cache-Control': 'public, max-age=600'
