@@ -31,6 +31,7 @@
         list-folded="false"
         list-max-height="400px"
         lrc-type="3"
+        data-lrc-type="3"
       )
 
 style.
@@ -89,6 +90,31 @@ script.
       return null
     }
 
+    // 抓取单首歌词（若仍是 URL 则替换为歌词文本）
+    function fetchLrc(audio) {
+      if (!audio) return
+      var lrc = audio.lrc
+      if (typeof lrc !== 'string' || lrc.indexOf('http') !== 0) return
+      var xhr = new XMLHttpRequest()
+      xhr.open('GET', lrc, true)
+      xhr.onload = function () {
+        if (xhr.status === 200 && xhr.responseText && xhr.responseText !== 'No lyrics') {
+          audio.lrc = xhr.responseText
+        }
+      }
+      xhr.send()
+    }
+
+    // 预加载附近歌词
+    function preloadLrc(ap) {
+      if (!ap.list || !ap.list.audios) return
+      var audios = ap.list.audios
+      var cur = ap.list.index
+      for (var i = cur; i < Math.min(cur + 6, audios.length); i++) {
+        fetchLrc(audios[i])
+      }
+    }
+
     // 等两个播放器都就绪后同步
     var syncDone = false
     var check = setInterval(function () {
@@ -99,7 +125,13 @@ script.
       if (syncDone) return
       syncDone = true
 
-      // 双向同步：本地播放 → 悬浮窗跟随
+      // 预加载歌词
+      preloadLrc(local)
+
+      // 切换歌曲时预加载新歌歌词
+      local.on('listswitch', function () { preloadLrc(local) })
+
+      // 本地播放 → 悬浮窗暂停（以音乐页为主）
       local.on('play', function () {
         var idx = local.list.index
         if (float.list.audios.length !== local.list.audios.length) {
@@ -107,7 +139,7 @@ script.
           float.list.add(local.list.audios)
         }
         float.list.switch(idx)
-        float.play()
+        float.pause()
       })
       local.on('pause', function () { float.pause() })
       local.on('listswitch', function (e) {
@@ -118,7 +150,8 @@ script.
         float.list.switch(e.index)
       })
 
-      // 如果悬浮窗已在播放，同步到本地
+      // 悬浮窗已在播放 → 仅同步歌单，不自动播放本地
+      // 悬浮窗继续播放，本地播放器仅更新歌单和当前歌曲
       if (!float.paused) {
         var fi = float.list.index
         if (local.list.audios.length !== float.list.audios.length) {
@@ -126,7 +159,8 @@ script.
           local.list.add(float.list.audios)
         }
         local.list.switch(fi)
-        local.play()
+        // 不调用 local.play() — 悬浮窗继续播放不受干扰
+        preloadLrc(local)
       }
     }, 300)
   })()

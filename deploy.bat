@@ -5,8 +5,8 @@ echo 博客部署脚本 — 构建 + 推送源码
 echo ====================================
 echo.
 echo [1/2] 清理并生成静态文件...
-npx hexo clean
-npx hexo generate
+call npx hexo clean
+call npx hexo generate
 if errorlevel 1 (
     echo ❌ 构建失败
     pause

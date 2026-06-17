@@ -1,5 +1,25 @@
 link(rel='stylesheet' href=url_for(theme.asset.aplayer_css) media="print" onload="this.media='all'")
 script(src=url_for(theme.asset.aplayer_js))
+script.
+  (function () {
+    if (typeof window.APlayer === 'undefined') return
+    var Orig = window.APlayer
+    window.APlayer = function (opts) {
+      // 修复 Meting.js 传过来的 lrcType 可能是字符串的问题
+      if (opts.lrcType !== undefined && typeof opts.lrcType !== 'number') {
+        opts.lrcType = parseInt(opts.lrcType, 10) || 0
+      }
+      // 非悬浮窗（完整播放器）默认显示歌词翻译
+      if (!opts.fixed && !opts.mini) {
+        if (!opts.lrcType) opts.lrcType = 3
+      }
+      return new Orig(opts)
+    }
+    window.APlayer.prototype = Orig.prototype
+    for (var k in Orig) {
+      if (Orig.hasOwnProperty(k)) window.APlayer[k] = Orig[k]
+    }
+  })()
 script(src=url_for(theme.asset.meting_js))
 
 //- 全局悬浮迷你播放器
