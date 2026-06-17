@@ -1,7 +1,9 @@
 link(rel='stylesheet' href=url_for(theme.asset.aplayer_css) media="print" onload="this.media='all'")
 script(src=url_for(theme.asset.aplayer_js))
 script(src=url_for(theme.asset.meting_js))
-//- 右下角悬浮音乐播放器 — 可拖动，跨页面不中断
+
+//- 全局 APlayer — fixed 模式跨页面不中断
+//- 非音乐页显示为右下角迷你悬浮窗；音乐页展开为完整播放器
 #music-float-player
   meting-js(
     server="netease"
@@ -9,7 +11,7 @@ script(src=url_for(theme.asset.meting_js))
     id="2309860218"
     api="https://fcmmm.xyz/api/music?server=:server&type=:type&id=:id"
     fixed="true"
-    mini="true"
+    mini="false"
     autoplay="false"
     theme="#49B1F5"
     loop="all"
@@ -20,150 +22,157 @@ script(src=url_for(theme.asset.meting_js))
   )
 
 style.
+  /* ===== 默认：悬浮迷你模式（所有页面） ===== */
   #music-float-player {
     position: fixed;
     right: 16px;
     bottom: 120px;
     z-index: 999;
     cursor: grab;
-    user-select: none;
-    -webkit-user-select: none;
   }
   #music-float-player:active { cursor: grabbing; }
   #music-float-player .aplayer {
     background: rgba(255,255,255,.95) !important;
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     border-radius: 50px !important;
     box-shadow: 0 4px 24px rgba(0,0,0,.12);
     padding: 6px 18px 6px 6px !important;
     margin: 0 !important;
-    height: auto !important;
-    width: auto !important;
+    max-width: 340px;
   }
   #music-float-player .aplayer.aplayer-fixed {
     position: static !important;
-    bottom: auto !important;
-    left: auto !important;
-    right: auto !important;
+    bottom: auto !important; left: auto !important; right: auto !important;
   }
-  /* 圆形封面 */
   #music-float-player .aplayer .aplayer-pic {
-    width: 48px !important;
-    height: 48px !important;
+    width: 48px !important; height: 48px !important;
     border-radius: 50% !important;
-    margin: 0 !important;
-    flex-shrink: 0;
+    margin: 0 !important; flex-shrink: 0;
   }
   #music-float-player .aplayer .aplayer-pic img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
-    border-radius: 50% !important;
+    width: 100% !important; height: 100% !important;
+    object-fit: cover; border-radius: 50% !important;
   }
-  /* 精简信息区 — 只显示歌名歌手 */
   #music-float-player .aplayer .aplayer-info {
-    margin-left: 10px !important;
-    height: auto !important;
-    padding: 0 !important;
-    flex: 0 1 auto;
-    max-width: 140px;
-    border: none !important;
+    margin-left: 10px !important; height: auto !important;
+    padding: 0 !important; flex: 0 1 auto; max-width: 130px;
   }
   #music-float-player .aplayer .aplayer-music {
-    font-size: 13px !important;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #333 !important;
-    margin: 0 !important;
+    font-size: 13px !important; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+    color: #333 !important; margin: 0 !important;
   }
-  #music-float-player .aplayer .aplayer-music .aplayer-author {
-    font-size: 11px !important;
-    color: #999 !important;
-    display: block;
-    margin-top: 1px;
+  #music-float-player .aplayer .aplayer-author {
+    font-size: 11px !important; color: #999 !important;
   }
   #music-float-player .aplayer .aplayer-controller {
-    margin-left: 8px !important;
-    display: flex !important;
-    align-items: center;
-    gap: 2px;
+    margin-left: 8px !important; display: flex; gap: 0;
   }
   #music-float-player .aplayer .aplayer-icon {
-    width: 32px !important;
-    height: 32px !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.8;
-    transition: opacity .2s;
+    width: 32px !important; height: 32px !important;
+    display: flex; align-items: center; justify-content: center;
   }
-  #music-float-player .aplayer .aplayer-icon:hover { opacity: 1; }
   #music-float-player .aplayer .aplayer-icon svg {
-    width: 18px !important;
-    height: 18px !important;
+    width: 18px; height: 18px;
   }
-  /* 隐藏不需要的元素 */
+  /* 迷你模式隐藏 */
   #music-float-player .aplayer .aplayer-lrc,
   #music-float-player .aplayer .aplayer-list,
   #music-float-player .aplayer .aplayer-volume,
   #music-float-player .aplayer .aplayer-icon-order,
   #music-float-player .aplayer .aplayer-icon-loop,
+  #music-float-player .aplayer .aplayer-icon-menu,
   #music-float-player .aplayer .aplayer-icon-lrc,
   #music-float-player .aplayer .aplayer-bar-wrap,
-  #music-float-player .aplayer .aplayer-time { display: none !important; }
-  /* 暗色模式 */
+  #music-float-player .aplayer .aplayer-time,
+  #music-float-player .aplayer .aplayer-miniswitcher { display: none !important; }
+
+  /* ===== 音乐页面：展开为完整播放器 ===== */
+  .type-music #music-float-player {
+    position: static !important;
+    cursor: default;
+    margin: 0 auto;
+    max-width: 900px;
+  }
+  .type-music #music-float-player .aplayer {
+    background: var(--card-bg, #fff) !important;
+    border-radius: 12px !important;
+    backdrop-filter: none;
+    box-shadow: none;
+    padding: 16px !important;
+    max-width: none;
+  }
+  .type-music #music-float-player .aplayer .aplayer-pic {
+    width: 120px !important; height: 120px !important;
+    border-radius: 8px !important;
+  }
+  .type-music #music-float-player .aplayer .aplayer-pic img {
+    border-radius: 8px !important;
+  }
+  .type-music #music-float-player .aplayer .aplayer-info {
+    max-width: none; margin-left: 16px !important;
+  }
+  .type-music #music-float-player .aplayer .aplayer-music {
+    font-size: 16px !important; margin-bottom: 6px !important;
+  }
+  .type-music #music-float-player .aplayer .aplayer-bar-wrap,
+  .type-music #music-float-player .aplayer .aplayer-time,
+  .type-music #music-float-player .aplayer .aplayer-lrc,
+  .type-music #music-float-player .aplayer .aplayer-list,
+  .type-music #music-float-player .aplayer .aplayer-volume,
+  .type-music #music-float-player .aplayer .aplayer-icon-order,
+  .type-music #music-float-player .aplayer .aplayer-icon-loop,
+  .type-music #music-float-player .aplayer .aplayer-icon-menu,
+  .type-music #music-float-player .aplayer .aplayer-icon-lrc { display: flex !important; }
+  .type-music #music-float-player .aplayer .aplayer-icon-lrc { display: inline-block !important; }
+  .type-music #music-float-player .aplayer .aplayer-list { display: block !important; }
+  .type-music #music-float-player .aplayer .aplayer-time { display: inline !important; }
+  .type-music #music-float-player .aplayer .aplayer-volume { display: flex !important; }
+
   [data-theme="dark"] #music-float-player .aplayer {
     background: rgba(30,30,30,.95) !important;
   }
+  [data-theme="dark"] .type-music #music-float-player .aplayer {
+    background: #1e1e1e !important;
+  }
   [data-theme="dark"] #music-float-player .aplayer .aplayer-music { color: #eee !important; }
+
   @media screen and (max-width: 768px) {
     #music-float-player { right: 8px; bottom: 90px; }
-    #music-float-player .aplayer .aplayer-info { max-width: 100px; }
+    #music-float-player .aplayer { max-width: 280px; }
+    #music-float-player .aplayer .aplayer-info { max-width: 90px; }
+    .type-music #music-float-player .aplayer .aplayer-pic {
+      width: 80px !important; height: 80px !important;
+    }
   }
 
 script.
-  // 拖动功能
+  // 拖动（仅迷你模式）
   (function () {
     var el = document.getElementById('music-float-player')
     if (!el) return
-    var isDragging = false, startX, startY, startLeft, startTop
-    var rect
+    var isDragging, startX, startY, startR, startB, rect
 
     function onDown(e) {
-      if (e.target.closest('.aplayer-icon') || e.target.closest('button') || e.target.closest('input')) return
-      isDragging = true
-      rect = el.getBoundingClientRect()
+      if (document.body.classList.contains('type-music')) return
+      if (e.target.closest('button') || e.target.closest('input') || e.target.closest('.aplayer-icon') || e.target.closest('svg') || e.target.closest('path')) return
+      isDragging = true; rect = el.getBoundingClientRect()
       var t = e.touches ? e.touches[0] : e
-      startX = t.clientX
-      startY = t.clientY
-      startLeft = rect.left
-      startTop = rect.top
-      el.style.transition = 'none'
-      e.preventDefault()
+      startX = t.clientX; startY = t.clientY
+      startR = parseInt(getComputedStyle(el).right)
+      startB = parseInt(getComputedStyle(el).bottom)
+      el.style.transition = 'none'; e.preventDefault()
     }
-
     function onMove(e) {
       if (!isDragging) return
       var t = e.touches ? e.touches[0] : e
-      var dx = t.clientX - startX
-      var dy = t.clientY - startY
-      var newRight = window.innerWidth - (startLeft + rect.width) - dx
-      var newBottom = window.innerHeight - (startTop + rect.height) - dy
-      // 限制在屏幕内
-      newRight = Math.max(4, Math.min(newRight, window.innerWidth - rect.width - 4))
-      newBottom = Math.max(4, Math.min(newBottom, window.innerHeight - rect.height - 4))
-      el.style.right = newRight + 'px'
-      el.style.bottom = newBottom + 'px'
+      var nr = startR - (t.clientX - startX)
+      var nb = startB - (t.clientY - startY)
+      nr = Math.max(4, Math.min(nr, window.innerWidth - rect.width - 4))
+      nb = Math.max(4, Math.min(nb, window.innerHeight - rect.height - 4))
+      el.style.right = nr + 'px'; el.style.bottom = nb + 'px'
     }
-
-    function onUp() {
-      if (!isDragging) return
-      isDragging = false
-      el.style.transition = ''
-    }
+    function onUp() { if (isDragging) { isDragging = false; el.style.transition = '' } }
 
     el.addEventListener('mousedown', onDown)
     el.addEventListener('touchstart', onDown, { passive: false })
@@ -176,14 +185,11 @@ script.
 if theme.pjax.enable
   script.
     (() => {
-      const destroyAplayer = () => {
+      btf.addGlobalFn('pjaxSend', () => {
         if (window.aplayers) {
           for (let i = 0; i < window.aplayers.length; i++) {
-            if (!window.aplayers[i].options.fixed) {
-              window.aplayers[i].destroy()
-            }
+            if (!window.aplayers[i].options.fixed) window.aplayers[i].destroy()
           }
         }
-      }
-      btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+      }, 'destroyAplayer')
     })()

@@ -1,4 +1,4 @@
-//- 音乐馆 — 播放列表，通过悬浮窗播放
+//- 音乐馆 — 播放器由全局悬浮窗展开，音乐页面自动显示完整 UI
 #music-page
   .music-hero
     .music-hero-content
@@ -14,14 +14,13 @@
         span
 
   .music-container
-    #music-playlist-wrap
-      .music-playlist-loading 加载歌单中...
+    //- APlayer 在这里展开（CSS: .type-music #music-float-player 自动适配）
     .music-info
       .music-info-card
         .music-info-header
           h3  关于音乐馆
         p 这里展示的是我在网易云音乐的「我喜欢的音乐」歌单，数据实时同步。
-        p 点击歌曲即可通过右下角悬浮窗播放；切换页面不中断。
+        p 切换页面播放不中断，右下角悬浮窗可拖动。
         .music-stats
           .music-stat-item
             span.music-stat-icon &#127926;
@@ -50,16 +49,6 @@ style.
   .music-wave span:nth-child(5) { animation-delay: .8s; }
   @keyframes waveAnim { 0%, 100% { height: 12px; } 50% { height: 28px; } }
   .music-container { background: var(--card-bg, #fff); border-radius: 16px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,.06); }
-  .music-playlist-loading { text-align:center; padding:40px; color:#999; }
-  .music-song-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; cursor: pointer; transition: background .2s; border-bottom: 1px solid var(--border-color, #f0f0f0); }
-  .music-song-item:hover { background: rgba(73,177,245,.06); }
-  .music-song-item.playing { background: rgba(73,177,245,.12); }
-  .music-song-index { width: 28px; text-align: center; font-size: 13px; color: #999; flex-shrink: 0; }
-  .music-song-item.playing .music-song-index { color: #49B1F5; font-weight: 700; }
-  .music-song-info { flex: 1; min-width: 0; }
-  .music-song-name { font-size: 14px; font-weight: 500; color: var(--font-color, #333); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .music-song-item.playing .music-song-name { color: #49B1F5; }
-  .music-song-artist { font-size: 12px; color: #999; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .music-info { margin-top: 20px; }
   .music-info-card { background: var(--card-bg, #fff); border-radius: 12px; padding: 20px 24px; border: 1px solid var(--border-color, #f0f0f0); }
   .music-info-card h3 { font-size: 16px; margin: 0 0 12px; color: var(--font-color, #333); }
@@ -70,107 +59,9 @@ style.
   .music-stat-icon { font-size: 16px; }
   [data-theme="dark"] .music-container { background: #1e1e1e; }
   [data-theme="dark"] .music-info-card { background: #1e1e1e; border-color: #333; }
-  [data-theme="dark"] .music-song-item { border-bottom-color: #333; }
   @media screen and (max-width: 768px) {
     .music-hero { padding: 32px 16px 24px; border-radius: 12px; }
     .music-hero h1 { font-size: 24px; }
     .music-container { padding: 10px; border-radius: 12px; }
     .music-stats { gap: 16px; flex-wrap: wrap; }
-    .music-song-item { padding: 8px 8px; gap: 8px; }
   }
-
-script.
-  (function () {
-    var PLAYLIST_ID = '#{page.playlist || "2309860218"}'
-    var API = 'https://fcmmm.xyz/api/music?server=netease&type=playlist&id=' + PLAYLIST_ID
-    var wrap = document.getElementById('music-playlist-wrap')
-    var songsData = []
-    var currentIndex = -1
-
-    // 请求歌单数据
-    fetch(API)
-      .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status)
-        return r.json()
-      })
-      .then(function (songs) {
-        if (songs.error) throw new Error(songs.error)
-        if (!songs.length) {
-          wrap.innerHTML = '<p class="music-playlist-loading">歌单为空</p>'
-          return
-        }
-        songsData = songs
-        renderList()
-        bindPlayer()
-      })
-      .catch(function (e) {
-        wrap.innerHTML = '<p class="music-playlist-loading">加载失败：' + e.message + '</p>'
-      })
-
-    function renderList() {
-      var h = ''
-      songsData.forEach(function (s, i) {
-        h += '<div class="music-song-item" data-idx="' + i + '">'
-        h += '<span class="music-song-index">' + (i + 1) + '</span>'
-        h += '<div class="music-song-info"><div class="music-song-name">' + s.name + '</div>'
-        h += '<div class="music-song-artist">' + s.artist + '</div></div>'
-        h += '</div>'
-      })
-      wrap.innerHTML = h
-
-      // 点击播放
-      wrap.querySelectorAll('.music-song-item').forEach(function (el) {
-        el.addEventListener('click', function () {
-          var idx = parseInt(this.dataset.idx)
-          currentIndex = idx
-          // 调用悬浮窗 APlayer 切歌
-          var ap = getAPlayer()
-          if (ap) {
-            // 确保 APlayer 列表有这首歌
-            if (ap.list.audios.length !== songsData.length) {
-              ap.list.clear()
-              ap.list.add(songsData)
-            }
-            ap.list.switch(idx)
-            ap.play()
-          }
-          updateActive()
-        })
-      })
-    }
-
-    function getAPlayer() {
-      if (window.aplayers) {
-        for (var i = 0; i < window.aplayers.length; i++) {
-          if (window.aplayers[i].options.fixed) return window.aplayers[i]
-        }
-      }
-      return null
-    }
-
-    function bindPlayer() {
-      var check = setInterval(function () {
-        var ap = getAPlayer()
-        if (!ap) return
-        clearInterval(check)
-        // 把歌单同步到 APlayer
-        if (ap.list.audios.length !== songsData.length) {
-          ap.list.clear()
-          ap.list.add(songsData)
-        }
-        // 监听切歌
-        ap.on('listswitch', function (e) {
-          currentIndex = e.index
-          updateActive()
-        })
-        updateActive()
-      }, 300)
-    }
-
-    function updateActive() {
-      wrap.querySelectorAll('.music-song-item').forEach(function (el) {
-        var idx = parseInt(el.dataset.idx)
-        el.classList.toggle('playing', idx === currentIndex)
-      })
-    }
-  })()
