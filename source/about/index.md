@@ -26,7 +26,7 @@ type: about
 
 ### 联系方式
 
-- GitHub: [https://github.com/Fcmmm](https://github.com/Fcmmm)
+
 - QQ: 1741322913
 - Email: 1741322913@qq.com
 - B站: [https://space.bilibili.com/290674578](https://space.bilibili.com/290674578)

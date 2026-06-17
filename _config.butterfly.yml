@@ -36,7 +36,7 @@ code_blocks:
 
 # Social media links (top-right in hero)
 social:
-  fab fa-github: https://github.com/Fcmmm || Github || '#24292e'
+
   fas fa-envelope: mailto:1741322913@qq.com || Email || '#4a7dbe'
   fab fa-qq: https://wpa.qq.com/msgrd?v=3&uin=1741322913&site=qq&menu=yes || QQ || '#2aa7e3'
   fab fa-bilibili: https://space.bilibili.com/290674578 || B站 || '#00a4da'

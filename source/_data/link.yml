@@ -13,10 +13,7 @@
 - class_name: 推荐站点
   class_desc: 一些值得推荐的网站
   link_list:
-    - name: GitHub
-      link: https://github.com/
-      avatar: https://api.dicebear.com/7.x/avataaars/svg?seed=github
-      descr: 全球最大的代码托管平台
+
     - name: MDN
       link: https://developer.mozilla.org/
       avatar: https://api.dicebear.com/7.x/avataaars/svg?seed=mdn
