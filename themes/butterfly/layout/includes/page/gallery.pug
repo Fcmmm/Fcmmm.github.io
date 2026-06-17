@@ -75,8 +75,9 @@ script.
             return
           }
 
-          // 解锁成功，合并数据文件图片与 Vercel 返回的图片
+          // 解锁成功，合并数据文件图片与 API 返回的图片
           sessionStorage.setItem('gallery_unlocked', 'true')
+          sessionStorage.setItem('gallery_password', pwd)
           var merged = DATA_IMAGES.concat(result.data.images || [])
           // 去重
           var seen = {}
@@ -97,12 +98,17 @@ script.
       if (e.key === 'Enter') submitPassword()
     })
 
-    // 已解锁时直接加载图片（使用缓存 token）
+    // 已解锁时直接加载图片
     function fetchImages() {
+      var savedPwd = sessionStorage.getItem('gallery_password')
+      if (!savedPwd) {
+        if (DATA_IMAGES.length) renderImages(DATA_IMAGES)
+        return
+      }
       fetch(WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: '20020113' }),
+        body: JSON.stringify({ password: savedPwd }),
       })
         .then(function (res) { return res.json() })
         .then(function (data) {

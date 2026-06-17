@@ -31,7 +31,7 @@ jobs:
           force_orphan: true
           commit_message: 'deploy: ${{ github.event.head_commit.message }}'
 
-      - name: Deploy to Aliyun
+      - name: Deploy static files to Aliyun
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.ALIYUN_SSH_KEY }}" > ~/.ssh/id_ed25519
@@ -41,3 +41,23 @@ jobs:
             -e "ssh -p ${{ secrets.ALIYUN_PORT }}" \
             public/ \
             ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_HOST }}:/www/wwwroot/fcmmm.xyz/main/
+
+      - name: Deploy server files to Aliyun
+        run: |
+          rsync -az \
+            -e "ssh -p ${{ secrets.ALIYUN_PORT }}" \
+            server/ \
+            ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_HOST }}:/www/wwwroot/fcmmm.xyz/server/
+          ssh -p ${{ secrets.ALIYUN_PORT }} ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_HOST }} "\
+            echo 'GALLERY_PASSWORD=${{ secrets.GALLERY_PASSWORD }}' > /www/wwwroot/fcmmm.xyz/server/.env && \
+            echo 'IMAGE_URLS=${{ secrets.IMAGE_URLS }}' >> /www/wwwroot/fcmmm.xyz/server/.env && \
+            chmod 600 /www/wwwroot/fcmmm.xyz/server/.env && \
+            echo '.env file created'"
+
+      - name: Restart API server
+        run: |
+          ssh -p ${{ secrets.ALIYUN_PORT }} ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_HOST }} "\
+            cd /www/wwwroot/fcmmm.xyz/server && \
+            export \$(grep -v '^#' .env | xargs) 2>/dev/null; \
+            { pm2 restart music-api 2>/dev/null || pm2 start music-api.js --name music-api 2>/dev/null || sudo systemctl restart music-api 2>/dev/null || (pkill -f 'node.*music-api' 2>/dev/null; nohup node music-api.js > /dev/null 2>&1 &); } && \
+            echo 'Server restarted OK'"

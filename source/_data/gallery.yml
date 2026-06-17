@@ -1,6 +1,6 @@
 # 私密图库配置
 # Worker 部署后，将下方 URL 替换为实际的 workers.dev 地址
-worker_url: "https://vercel-api-ten-sigma.vercel.app/api/gallery"
+worker_url: "https://fcmmm.xyz/api/gallery"
 # 图库图片列表（由后台管理自动维护）
 # 可在此手动添加图片 URL（完整 URL 或 /img/gallery/ 下的相对路径）
 images:
