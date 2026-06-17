@@ -47,17 +47,18 @@ jobs:
           rsync -az \
             -e "ssh -p ${{ secrets.ALIYUN_PORT }}" \
             server/ \
-            ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_HOST }}:/www/wwwroot/fcmmm.xyz/server/
+            ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_HOST }}:/www/server/music-api/
           ssh -p ${{ secrets.ALIYUN_PORT }} ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_HOST }} "\
-            echo 'GALLERY_PASSWORD=${{ secrets.GALLERY_PASSWORD }}' > /www/wwwroot/fcmmm.xyz/server/.env && \
-            echo 'IMAGE_URLS=' >> /www/wwwroot/fcmmm.xyz/server/.env && \
-            chmod 600 /www/wwwroot/fcmmm.xyz/server/.env && \
+            echo 'GALLERY_PASSWORD=${{ secrets.GALLERY_PASSWORD }}' > /www/server/music-api/.env && \
+            echo 'IMAGE_URLS=' >> /www/server/music-api/.env && \
+            chmod 600 /www/server/music-api/.env && \
             echo '.env file created'"
 
       - name: Restart API server
         run: |
           ssh -p ${{ secrets.ALIYUN_PORT }} ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_HOST }} "\
-            cd /www/wwwroot/fcmmm.xyz/server && \
+            cd /www/server/music-api && \
             export \$(grep -v '^#' .env | xargs) 2>/dev/null; \
-            { pm2 restart music-api 2>/dev/null || pm2 start music-api.js --name music-api 2>/dev/null || sudo systemctl restart music-api 2>/dev/null || (pkill -f 'node.*music-api' 2>/dev/null; nohup node music-api.js > /dev/null 2>&1 &); } && \
+            pkill -f 'node.*music-api' 2>/dev/null; sleep 1; \
+            nohup node music-api.js > /dev/null 2>&1 &; \
             echo 'Server restarted OK'"
