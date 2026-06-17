@@ -30,7 +30,6 @@
         volume="0.7"
         list-folded="true"
         list-max-height="400px"
-        lrc-type="1"
       )
 
     .music-info
@@ -78,7 +77,6 @@ script.
     meting.setAttribute('volume', '0.7');
     meting.setAttribute('list-folded', 'true');
     meting.setAttribute('list-max-height', '400px');
-    meting.setAttribute('lrc-type', '3');
     wrap.appendChild(meting);
     // MetingJS v2 是 Web Component，appendChild 会自动触发 connectedCallback 初始化
     setTimeout(function() {
@@ -122,9 +120,8 @@ style.
   #music-player-wrap .aplayer .aplayer-list ol li:hover { background: rgba(73,177,245,.05) !important; }
   #music-player-wrap .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(73,177,245,.08) !important; }
   #music-player-wrap .aplayer .aplayer-info .aplayer-music { color: var(--font-color, #333) !important; }
-  #music-player-wrap .aplayer .aplayer-lrc { display: block !important; height: auto !important; min-height: 40px !important; max-height: 200px !important; overflow-y: auto !important; color: var(--font-color, #666) !important; }
-  #music-player-wrap .aplayer .aplayer-lrc-content { display: block !important; }
-  #music-player-wrap .aplayer .aplayer-lrc:before, #music-player-wrap .aplayer .aplayer-lrc:after { display: none !important; }
+  #music-player-wrap .aplayer .aplayer-lrc { color: var(--font-color, #666) !important; }
+  #music-player-wrap .aplayer .aplayer-lrc:before, #music-player-wrap .aplayer .aplayer-lrc:after { background: var(--card-bg, #fff) !important; }
   .music-info { margin-top: 20px; }
   .music-info-card { background: var(--card-bg, #fff); border-radius: 12px; padding: 20px 24px; border: 1px solid var(--border-color, #f0f0f0); }
   .music-info-card h3 { font-size: 16px; margin: 0 0 12px; color: var(--font-color, #333); }
