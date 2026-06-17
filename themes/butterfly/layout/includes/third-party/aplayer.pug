@@ -2,7 +2,7 @@ link(rel='stylesheet' href=url_for(theme.asset.aplayer_css) media="print" onload
 script(src=url_for(theme.asset.aplayer_js))
 script(src=url_for(theme.asset.meting_js))
 
-//- 全局悬浮播放器 — 固定底部，跨页面不中断
+//- 全局 APlayer — 其他页悬浮底部，音乐页展开为完整播放器
 #music-float-player
   meting-js(
     server="netease"
@@ -10,22 +10,65 @@ script(src=url_for(theme.asset.meting_js))
     id="2309860218"
     api="https://fcmmm.xyz/api/music?server=:server&type=:type&id=:id"
     fixed="true"
-    mini="true"
+    mini="false"
     autoplay="false"
     theme="#49B1F5"
     loop="all"
     order="random"
     volume="0.7"
+    list-folded="false"
+    list-max-height="400px"
+    lrc-type="3"
   )
 
 style.
-  /* 上移悬浮窗，避免遮挡右下角按钮 */
-  #music-float-player .aplayer.aplayer-fixed {
-    bottom: 60px !important;
+  /* ===== 默认：悬浮底部（非音乐页） ===== */
+  #music-float-player {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 40px;
+    z-index: 99;
   }
+  #music-float-player .aplayer.aplayer-fixed {
+    position: static !important;
+    bottom: auto !important;
+  }
+  /* 默认隐藏歌词、歌单，只显示迷你控制条 */
+  #music-float-player .aplayer .aplayer-lrc { display: none !important; }
+  #music-float-player .aplayer .aplayer-list { display: none !important; }
+  #music-float-player .aplayer .aplayer-pic { display: none !important; }
+  #music-float-player .aplayer .aplayer-info { margin-left: 0 !important; }
+  #music-float-player .aplayer .aplayer-miniswitcher { display: none !important; }
+
+  /* ===== 音乐页：展开完整播放器 ===== */
+  .type-music #music-float-player {
+    position: static !important;
+    margin: 0;
+    z-index: auto;
+  }
+  .type-music #music-float-player .aplayer {
+    background: var(--card-bg, #fff) !important;
+    border-radius: 12px;
+    max-width: 900px;
+    margin: 0 auto 20px;
+  }
+  .type-music #music-float-player .aplayer .aplayer-pic { display: block !important; }
+  .type-music #music-float-player .aplayer .aplayer-info { margin-left: 130px !important; }
+  .type-music #music-float-player .aplayer .aplayer-lrc { display: block !important; }
+  .type-music #music-float-player .aplayer .aplayer-list { display: block !important; }
+
+  [data-theme="dark"] .type-music #music-float-player .aplayer {
+    background: #1e1e1e !important;
+  }
+
   @media screen and (max-width: 768px) {
-    #music-float-player .aplayer.aplayer-fixed {
-      bottom: 50px !important;
+    #music-float-player { bottom: 50px; }
+    .type-music #music-float-player .aplayer .aplayer-pic {
+      width: 80px !important; height: 80px !important;
+    }
+    .type-music #music-float-player .aplayer .aplayer-info {
+      margin-left: 90px !important;
     }
   }
 
