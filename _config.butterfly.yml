@@ -86,14 +86,14 @@ error_404:
 
 post_meta:
   page:
-    date_type: both
+    date_type: created
     date_format: date
     categories: true
     tags: true
     label: true
   post:
     position: left
-    date_type: both
+    date_type: created
     date_format: date
     categories: true
     tags: true
