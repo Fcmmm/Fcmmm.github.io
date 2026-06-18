@@ -126,6 +126,14 @@ script.
       if (syncDone) return
       syncDone = true
 
+      // 强制歌单高度自适应
+      var listEl = local.list.container
+      if (listEl) {
+        listEl.style.setProperty('max-height', 'calc(100vh - 280px)', 'important')
+        var ol = listEl.querySelector('ol')
+        if (ol) ol.style.setProperty('max-height', 'calc(100vh - 280px)', 'important')
+      }
+
       // 预加载歌词
       preloadLrc(local)
 
