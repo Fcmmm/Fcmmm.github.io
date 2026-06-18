@@ -29,6 +29,7 @@
         preload="auto"
         volume="0.7"
         list-folded="false"
+        list-max-height="900px"
         lrc-type="3"
         data-lrc-type="3"
       )
@@ -50,8 +51,6 @@ style.
   .music-wave span:nth-child(5) { animation-delay: .8s; }
   @keyframes waveAnim { 0%, 100% { height: 8px; } 50% { height: 20px; } }
   .music-container { background: var(--card-bg, #fff); border-radius: 16px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,.06); }
-  #music-player-wrap .aplayer .aplayer-list,
-  #music-player-wrap .aplayer .aplayer-list ol { max-height: calc(100vh - 280px) !important; }
   #music-player-wrap { border-radius: 12px; }
   #music-player-wrap .aplayer { background: var(--card-bg, #fff) !important; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
   #music-player-wrap .aplayer .aplayer-list ol li { border-top: 1px solid var(--border-color, #f0f0f0) !important; }
@@ -125,14 +124,6 @@ script.
       clearInterval(check)
       if (syncDone) return
       syncDone = true
-
-      // 强制歌单高度自适应
-      var listEl = local.list.container
-      if (listEl) {
-        listEl.style.setProperty('max-height', 'calc(100vh - 280px)', 'important')
-        var ol = listEl.querySelector('ol')
-        if (ol) ol.style.setProperty('max-height', 'calc(100vh - 280px)', 'important')
-      }
 
       // 预加载歌词
       preloadLrc(local)
