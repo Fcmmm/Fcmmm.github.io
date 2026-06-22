@@ -7,6 +7,7 @@ tags:
   - 教程
   - 代码块
 cover: /images/covers/cover-011.jpg
+cover_type: img
 top: true
 abbrlink: 455384546
 date: 2026-05-28 08:00:00

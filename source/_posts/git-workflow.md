@@ -6,6 +6,7 @@ tags:
   - 版本控制
   - 教程
 cover: /images/covers/cover-001.jpg
+cover_type: img
 abbrlink: 129012965
 date: 2026-05-28 08:30:00
 ---

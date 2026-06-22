@@ -6,6 +6,7 @@ tags:
   - 技术论坛
   - 提问技巧
 cover: /images/covers/cover-021.jpg
+cover_type: img
 top: true
 abbrlink: 4214764277
 date: 2026-05-28 08:10:00
