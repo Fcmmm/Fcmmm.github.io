@@ -6,7 +6,7 @@ tags:
   - Hexo
   - 教程
   - 代码块
-cover: 'https://picsum.photos/seed/markdown/800/400'
+cover: /images/covers/cover-011.jpg
 top: true
 abbrlink: 455384546
 date: 2026-05-28 08:00:00

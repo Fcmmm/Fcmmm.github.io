@@ -5,7 +5,7 @@ tags:
   - 开源软件
   - 技术论坛
   - 提问技巧
-cover: 'https://picsum.photos/seed/question/800/400'
+cover: /images/covers/cover-021.jpg
 top: true
 abbrlink: 4214764277
 date: 2026-05-28 08:10:00
