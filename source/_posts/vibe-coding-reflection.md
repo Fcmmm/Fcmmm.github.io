@@ -8,7 +8,7 @@ tags:
   - AI
   - DeepSeek
   - 编程
-cover: /images/covers/cover-031.jpg
+cover: http://114.215.125.28/images/covers/cover-031.jpg
 cover_type: img
 abbrlink: vibe-coding-reflection
 date: 2026-05-28 09:20:00

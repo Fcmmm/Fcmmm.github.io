@@ -6,7 +6,7 @@ tags:
   - Hexo
   - 教程
   - 代码块
-cover: /images/covers/cover-011.jpg
+cover: http://114.215.125.28/images/covers/cover-011.jpg
 cover_type: img
 top: true
 abbrlink: 455384546

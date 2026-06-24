@@ -10,7 +10,7 @@ nav:
   fixed: false
 
 menu:
-  文章: /archives/ || fas fa-book
+  文章: / || fas fa-book
   归档: /archives/ || fas fa-box-archive
   标签: /tags/ || fas fa-tags
   分类: /categories/ || fas fa-folder-open
@@ -54,7 +54,7 @@ default_top_img:
 
 index_img:
 
-archive_img:
+archive_img: http://114.215.125.28/images/covers/cover-010.jpg
 
 tag_img:
 
@@ -382,7 +382,7 @@ mask:
   footer: true
 
 preloader:
-  enable: true
+  enable: false
   source: 2
   pace_css_url:
 
@@ -494,7 +494,7 @@ snackbar:
 instantpage: true
 
 lazyload:
-  enable: true
+  enable: false
   native: false
   field: site
   placeholder:
