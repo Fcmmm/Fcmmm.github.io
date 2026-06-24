@@ -10,7 +10,7 @@ nav:
   fixed: false
 
 menu:
-  文章: / || fas fa-book
+  文章: /archives/ || fas fa-book
   归档: /archives/ || fas fa-box-archive
   标签: /tags/ || fas fa-tags
   分类: /categories/ || fas fa-folder-open
@@ -54,7 +54,7 @@ default_top_img:
 
 index_img:
 
-archive_img: /images/covers/cover-010.jpg
+archive_img:
 
 tag_img:
 
