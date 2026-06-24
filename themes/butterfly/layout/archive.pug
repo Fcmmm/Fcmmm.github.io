@@ -1,8 +1,26 @@
 extends includes/layout.pug
 
 block content
-  include ./includes/mixins/article-sort.pug
   #archive
     .article-sort-title= `${_p('page.articles')} - ${getArchiveLength()}`
-    +articleSort(page.posts)
+    .article-sort
+      -
+        let curYear, curMonth
+        const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+        const posts = page.posts.sort('date', -1).toArray()
+      each article in posts
+        -
+          const y = date(article.date, 'YYYY')
+          const m = date(article.date, 'M') - 0
+          const title = article.title || _p('no_title')
+        if y !== curYear
+          - curYear = y; curMonth = 0
+          .article-sort-item.year= curYear
+        if m !== curMonth
+          - curMonth = m
+          .article-sort-item.month= curYear + ' 年 ' + monthNames[m - 1]
+        .article-sort-item
+          .article-sort-item-info
+            time.article-sort-item-time(datetime=date_xml(article.date))= date(article.date, 'MM-DD')
+            a.article-sort-item-title(href=url_for(article.path) title=title)= title
     include includes/pagination.pug
