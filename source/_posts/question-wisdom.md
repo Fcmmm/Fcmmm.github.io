@@ -5,7 +5,7 @@ tags:
   - 开源软件
   - 技术论坛
   - 提问技巧
-cover: http://114.215.125.28/images/covers/cover-021.jpg
+cover: /images/covers/cover-021.jpg
 cover_type: img
 top: true
 abbrlink: 4214764277

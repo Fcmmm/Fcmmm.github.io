@@ -54,7 +54,7 @@ default_top_img:
 
 index_img:
 
-archive_img: http://114.215.125.28/images/covers/cover-010.jpg
+archive_img: /images/covers/cover-010.jpg
 
 tag_img:
 
