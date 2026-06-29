@@ -1,0 +1,513 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>将项目部署至服务器 | Fcmmm's Blog</title><meta name="author" content="Jta"><meta name="copyright" content="Jta"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="今天把项目部署在了阿里云服务器上阿里云服务器300元优惠券，大体过程： 部署过程： 123主项目：Hexo + Butterfly访问： https:&#x2F;&#x2F;fcmmm.xyz&#x2F;  最终部署结构： 12&#x2F;www&#x2F;wwwroot&#x2F;fcmmm.xyz&#x2F;├── main&#x2F;        # Hexo 主站 public&#x2F; 目录里的内容  Hexo 的静态构建产物默认生成在 public&#x2F;，部署时应同步 pu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="将项目部署至服务器">
+<meta property="og:url" content="https://fcmmm.xyz/p/3479128065/">
+<meta property="og:site_name" content="Fcmmm&#39;s Blog">
+<meta property="og:description" content="今天把项目部署在了阿里云服务器上阿里云服务器300元优惠券，大体过程： 部署过程： 123主项目：Hexo + Butterfly访问： https:&#x2F;&#x2F;fcmmm.xyz&#x2F;  最终部署结构： 12&#x2F;www&#x2F;wwwroot&#x2F;fcmmm.xyz&#x2F;├── main&#x2F;        # Hexo 主站 public&#x2F; 目录里的内容  Hexo 的静态构建产物默认生成在 public&#x2F;，部署时应同步 pu">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fcmmm.xyz/images/covers/cover-061.jpg">
+<meta property="article:published_time" content="2026-06-16T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-29T11:28:31.962Z">
+<meta property="article:author" content="Jta">
+<meta property="article:tag" content="开发心得">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fcmmm.xyz/images/covers/cover-061.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "将项目部署至服务器",
+  "url": "https://fcmmm.xyz/p/3479128065/",
+  "image": "https://fcmmm.xyz/images/covers/cover-061.jpg",
+  "datePublished": "2026-06-16T12:00:00.000Z",
+  "dateModified": "2026-06-29T11:28:31.962Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Jta",
+      "url": "https://fcmmm.xyz/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://fcmmm.xyz/p/3479128065/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.3.2"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const mediaQueryDark = window.matchMedia('(prefers-color-scheme: dark)')
+          const mediaQueryLight = window.matchMedia('(prefers-color-scheme: light)')
+          
+          if (theme === undefined) {
+            if (mediaQueryLight.matches) activateLightMode()
+            else if (mediaQueryDark.matches) activateDarkMode()
+            else {
+              const hour = new Date().getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            mediaQueryDark.addEventListener('change', () => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else {
+            theme === 'light' ? activateLightMode() : activateDarkMode()
+          }
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":230,"highlightFullpage":true,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":150,"languages":{"author":"作者: Jta","link":"链接: ","source":"来源: Fcmmm's Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-right"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '将项目部署至服务器',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.1.2"><link rel="alternate" href="/atom.xml" title="Fcmmm's Blog" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-book"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-box-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-mug-hot"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/projects/"><i class="fa-fw fas fa-code"></i><span> 项目</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-paperclip"></i><span> 社交</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友人帐</span></a></li><li><a class="site-page child" href="/comments/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/images/covers/cover-061.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Fcmmm's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">将项目部署至服务器</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-book"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-box-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-mug-hot"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/projects/"><i class="fa-fw fas fa-code"></i><span> 项目</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-paperclip"></i><span> 社交</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友人帐</span></a></li><li><a class="site-page child" href="/comments/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">将项目部署至服务器</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2026-06-16T12:00:00.000Z" title="发表于 2026-06-16 20:00:00">2026-06-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B0%8F%E8%AE%B0/">小记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">1.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="今天把项目部署在了阿里云服务器上阿里云服务器300元优惠券，大体过程："><a href="#今天把项目部署在了阿里云服务器上阿里云服务器300元优惠券，大体过程：" class="headerlink" title="今天把项目部署在了阿里云服务器上阿里云服务器300元优惠券，大体过程："></a>今天把项目部署在了阿里云服务器上<a target="_blank" rel="noopener" href="http://i8c.cn/zuCii">阿里云服务器300元优惠券</a>，大体过程：</h2><p> <strong>部署过程</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">主项目：Hexo + Butterfly</span><br><span class="line">访问： https://fcmmm.xyz/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>最终部署结构：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/www/wwwroot/fcmmm.xyz/</span><br><span class="line">├── main/        # Hexo 主站 public/ 目录里的内容</span><br></pre></td></tr></table></figure>
+
+<p>Hexo 的静态构建产物默认生成在 <code>public/</code>，部署时应同步 <code>public/</code> 里的内容，而不是整个 Hexo 源码目录。(<a target="_blank" rel="noopener" href="https://hexo.io/docs/generating?utm_source=chatgpt.com">Hexo</a>) GitHub Actions 里使用 <code>actions/checkout</code> 是为了把仓库代码检出到工作区，后续步骤才能构建或同步文件。(<a target="_blank" rel="noopener" href="https://github.com/actions/checkout?utm_source=chatgpt.com">GitHub</a>) GitHub Secrets 用于保存 SSH 私钥、服务器 IP 等敏感信息。(<a target="_blank" rel="noopener" href="https://docs.github.com/actions/security-guides/using-secrets-in-github-actions?utm_source=chatgpt.com">GitHub Docs</a>)</p>
+<hr>
+<h1 id="一、服务器目录准备"><a href="#一、服务器目录准备" class="headerlink" title="一、服务器目录准备"></a>一、服务器目录准备</h1><p>先用 <code>root</code> 登录服务器：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh root@<span class="number">114</span>.<span class="number">215</span>.<span class="number">125</span>.<span class="number">28</span></span><br></pre></td></tr></table></figure>
+
+<p>进入服务器后执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /www/wwwroot/fcmmm.xyz/main</span><br></pre></td></tr></table></figure>
+
+<p>确认目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -la /www/wwwroot/fcmmm.xyz/</span><br></pre></td></tr></table></figure>
+
+<p>应该看到：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">main/</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="二、创建-deploy-部署用户"><a href="#二、创建-deploy-部署用户" class="headerlink" title="二、创建 deploy 部署用户"></a>二、创建 deploy 部署用户</h1><p>仍然在服务器里执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span> deploy || useradd -m -s /bin/bash deploy</span><br></pre></td></tr></table></figure>
+
+<p>创建 SSH 目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /home/deploy/.ssh</span><br><span class="line"><span class="built_in">touch</span> /home/deploy/.ssh/authorized_keys</span><br><span class="line"><span class="built_in">chown</span> -R deploy:deploy /home/deploy/.ssh</span><br><span class="line"><span class="built_in">chmod</span> 700 /home/deploy/.ssh</span><br><span class="line"><span class="built_in">chmod</span> 600 /home/deploy/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+
+<p>给网站目录权限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chown</span> -R deploy:deploy /www/wwwroot/fcmmm.xyz</span><br><span class="line"><span class="built_in">chmod</span> -R 755 /www/wwwroot/fcmmm.xyz</span><br></pre></td></tr></table></figure>
+
+<p>退出服务器：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="三、Windows-本地生成-SSH-密钥"><a href="#三、Windows-本地生成-SSH-密钥" class="headerlink" title="三、Windows 本地生成 SSH 密钥"></a>三、Windows 本地生成 SSH 密钥</h1><p>在你的 Windows CMD 中执行：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t ed25519 -C &quot;github-actions-deploy-xxx&quot; -f github-actions-deploy-xxx</span><br></pre></td></tr></table></figure>
+
+<p>生成两个文件：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">github-actions-deploy-xxx       # 私钥，放 GitHub Secrets</span><br><span class="line">github-actions-deploy-xxx.pub   # 公钥，放服务器</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="四、把公钥写入服务器"><a href="#四、把公钥写入服务器" class="headerlink" title="四、把公钥写入服务器"></a>四、把公钥写入服务器</h1><p>你是 Windows CMD，不能用 <code>cat</code>，要用 <code>type</code>。</p>
+<p>执行：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> github-actions-deploy-xxx.pub | ssh root@<span class="number">114</span>.<span class="number">215</span>.<span class="number">125</span>.<span class="number">28</span> &quot;cat &gt;&gt; /home/deploy/.ssh/authorized_keys &amp;&amp; chown -R deploy:deploy /home/deploy/.ssh &amp;&amp; chmod <span class="number">700</span> /home/deploy/.ssh &amp;&amp; chmod <span class="number">600</span> /home/deploy/.ssh/authorized_keys&quot;</span><br></pre></td></tr></table></figure>
+
+<p>然后测试：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -i github-actions-deploy-xxx deploy@<span class="number">114</span>.<span class="number">215</span>.<span class="number">125</span>.<span class="number">28</span></span><br></pre></td></tr></table></figure>
+
+<p>如果成功，会进入服务器，例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[deploy@xxx ~]$</span><br></pre></td></tr></table></figure>
+
+<p>如果还是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Permission denied (publickey,gssapi-keyex,gssapi-with-mic)</span><br></pre></td></tr></table></figure>
+
+<p>说明密钥仍然没配置成功，需要检查：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /home/deploy/.ssh/authorized_keys</span><br><span class="line"><span class="built_in">ls</span> -la /home/deploy/.ssh</span><br></pre></td></tr></table></figure>
+
+<p>成功登录后退出：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="五、宝塔-Nginx-配置"><a href="#五、宝塔-Nginx-配置" class="headerlink" title="五、宝塔 Nginx 配置"></a>五、宝塔 Nginx 配置</h1><p>进入宝塔面板：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">网站 → fcmmm.xyz → 设置 → 配置文件</span><br></pre></td></tr></table></figure>
+
+<p>使用下面这份配置。它适配：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">/www/wwwroot/fcmmm.xyz/main      → 主站</span><br><span class="line">server</span><br><span class="line">&#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    listen 443 ssl;</span><br><span class="line">    listen 443 quic;</span><br><span class="line">    http2 on;</span><br><span class="line">    http3 on;</span><br><span class="line"></span><br><span class="line">    server_name fcmmm.xyz www.fcmmm.xyz;</span><br><span class="line"></span><br><span class="line">    # 主站根目录：Hexo + Butterfly 构建后的 public/ 内容</span><br><span class="line">    root /www/wwwroot/fcmmm.xyz/main;</span><br><span class="line">    index index.html index.htm default.htm default.html;</span><br><span class="line"></span><br><span class="line">    # 宝塔扩展配置</span><br><span class="line">    include /www/server/panel/vhost/nginx/extension/fcmmm.xyz/*.conf;</span><br><span class="line"></span><br><span class="line">    # CERT-APPLY-CHECK--START</span><br><span class="line">    include /www/server/panel/vhost/nginx/well-known/fcmmm.xyz.conf;</span><br><span class="line">    # CERT-APPLY-CHECK--END</span><br><span class="line"></span><br><span class="line">    # SSL-START</span><br><span class="line">    # error_page 404/404.html;</span><br><span class="line">    ssl_certificate        /www/server/panel/vhost/cert/fcmmm.xyz/fullchain.pem;</span><br><span class="line">    ssl_certificate_key    /www/server/panel/vhost/cert/fcmmm.xyz/privkey.pem;</span><br><span class="line">    ssl_protocols TLSv1.2 TLSv1.3;</span><br><span class="line">    ssl_ciphers EECDH+CHACHA20:EECDH+CHACHA20-draft:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;</span><br><span class="line">    ssl_prefer_server_ciphers on;</span><br><span class="line">    ssl_session_tickets on;</span><br><span class="line">    ssl_session_cache shared:SSL:10m;</span><br><span class="line">    ssl_session_timeout 10m;</span><br><span class="line">    add_header Strict-Transport-Security &quot;max-age=31536000&quot;;</span><br><span class="line">    add_header Alt-Svc &#x27;quic=&quot;:443&quot;; h3=&quot;:443&quot;; h3-29=&quot;:443&quot;; h3-27=&quot;:443&quot;; h3-25=&quot;:443&quot;; h3-T050=&quot;:443&quot;; h3-Q050=&quot;:443&quot;; h3-Q049=&quot;:443&quot;; h3-Q048=&quot;:443&quot;; h3-Q046=&quot;:443&quot;; h3-Q043=&quot;:443&quot;&#x27;;</span><br><span class="line">    quic_retry on;</span><br><span class="line">    quic_gso on;</span><br><span class="line">    ssl_early_data on;</span><br><span class="line">    error_page 497 https://$host$request_uri;</span><br><span class="line">    # SSL-END</span><br><span class="line"></span><br><span class="line">    # ERROR-PAGE-START</span><br><span class="line">    # error_page 404 /404.html;</span><br><span class="line">    # error_page 502 /502.html;</span><br><span class="line">    # ERROR-PAGE-END</span><br><span class="line"></span><br><span class="line">    # REWRITE-START</span><br><span class="line">    include /www/server/panel/vhost/rewrite/html_fcmmm.xyz.conf;</span><br><span class="line">    # REWRITE-END</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    # Hexo 主站</span><br><span class="line">    location / &#123;</span><br><span class="line">        try_files $uri $uri/ /index.html;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # 静态资源缓存</span><br><span class="line">    location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg|webp|woff|woff2|ttf|eot)$ &#123;</span><br><span class="line">        expires 30d;</span><br><span class="line">        add_header Cache-Control &quot;public&quot;;</span><br><span class="line">        try_files $uri =404;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # 禁止访问敏感文件</span><br><span class="line">    location ~* (\.user.ini|\.htaccess|\.htpasswd|\.env.*|\.project|\.bashrc|\.bash_profile|\.bash_logout|\.DS_Store|\.gitignore|\.gitattributes|LICENSE|README\.md|CLAUDE\.md|CHANGELOG\.md|CHANGELOG|CONTRIBUTING\.md|TODO\.md|FAQ\.md|composer\.json|composer\.lock|package(-lock)?\.json|yarn\.lock|pnpm-lock\.yaml|\.\w+~|\.swp|\.swo|\.bak(up)?|\.old|\.tmp|\.temp|\.log|\.sql(\.gz)?|docker-compose\.yml|docker\.env|Dockerfile|\.csproj|\.sln|Cargo\.toml|Cargo\.lock|go\.mod|go\.sum|phpunit\.xml|pom\.xml|build\.gradl|pyproject\.toml|requirements\.txt|application(-\w+)?\.(ya?ml|properties))$</span><br><span class="line">    &#123;</span><br><span class="line">        return 404;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # 禁止访问敏感目录</span><br><span class="line">    location ~* /(\.git|\.svn|\.bzr|\.vscode|\.claude|\.idea|\.ssh|\.github|\.npm|\.yarn|\.pnpm|\.cache|\.husky|\.turbo|\.next|\.nuxt|node_modules|runtime)/ &#123;</span><br><span class="line">        return 404;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # SSL 验证目录</span><br><span class="line">    location ~ \.well-known &#123;</span><br><span class="line">        allow all;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if ( $uri ~ &quot;^/\.well-known/.*\.(php|jsp|py|js|css|lua|ts|go|zip|tar\.gz|rar|7z|sql|bak)$&quot; ) &#123;</span><br><span class="line">        return 403;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    access_log  /www/wwwlogs/fcmmm.xyz.log;</span><br><span class="line">    error_log   /www/wwwlogs/fcmmm.xyz.error.log;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>保存后 SSH 执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nginx -t</span><br><span class="line">systemctl reload nginx</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="六、主项目-Hexo-Butterfly-配置"><a href="#六、主项目-Hexo-Butterfly-配置" class="headerlink" title="六、主项目 Hexo + Butterfly 配置"></a>六、主项目 Hexo + Butterfly 配置</h1><p>在 <code>xxx.github.io</code> 仓库的 <code>_config.yml</code> 中确认：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">url:</span> <span class="string">https://fcmmm.xyz</span></span><br><span class="line"><span class="attr">root:</span> <span class="string">/</span></span><br></pre></td></tr></table></figure>
+
+<p>root: &#x2F;fcmlove&#x2F;</p>
+<p>本地测试构建：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br><span class="line">npx hexo clean</span><br><span class="line">npx hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>构建后会生成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public/</span><br></pre></td></tr></table></figure>
+
+<p>服务器最终应该是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/www/wwwroot/fcmmm.xyz/main/index.html</span><br><span class="line">/www/wwwroot/fcmmm.xyz/main/archives/</span><br><span class="line">/www/wwwroot/fcmmm.xyz/main/css/</span><br><span class="line">/www/wwwroot/fcmmm.xyz/main/js/</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="七、GitHub-Secrets-配置"><a href="#七、GitHub-Secrets-配置" class="headerlink" title="七、GitHub Secrets 配置"></a>七、GitHub Secrets 配置</h1><p>仓库添加 Secrets：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx.github.io</span><br></pre></td></tr></table></figure>
+
+<p>进入仓库：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Settings → Secrets and variables → Actions → New repository secret</span><br></pre></td></tr></table></figure>
+
+<p>添加：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ALIYUN_HOST       114.215.125.28</span><br><span class="line">ALIYUN_USER       deploy</span><br><span class="line">ALIYUN_PORT       22</span><br><span class="line">ALIYUN_SSH_KEY    github-actions-deploy-xxx 私钥完整内容</span><br></pre></td></tr></table></figure>
+
+<p>注意：</p>
+<p><code>ALIYUN_SSH_KEY</code> 填的是私钥，不是 <code>.pub</code> 公钥。</p>
+<p>在 Windows CMD 查看私钥内容：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> github-actions-deploy-xxx</span><br></pre></td></tr></table></figure>
+
+<p>复制完整内容，包含：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-----BEGIN OPENSSH PRIVATE KEY-----</span><br><span class="line">...</span><br><span class="line">-----END OPENSSH PRIVATE KEY-----</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="八、主项目-xxx-github-io-的-GitHub-Actions"><a href="#八、主项目-xxx-github-io-的-GitHub-Actions" class="headerlink" title="八、主项目 xxx.github.io 的 GitHub Actions"></a>八、主项目 xxx.github.io 的 GitHub Actions</h1><p>在 <code>xxx.github.io</code> 仓库中新建：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.github/workflows/deploy.yml</span><br></pre></td></tr></table></figure>
+
+<p>内容：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">Deploy</span> <span class="string">Hexo</span> <span class="string">Main</span> <span class="string">Site</span> <span class="string">to</span> <span class="string">Aliyun</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [<span class="string">main</span>]</span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">build-and-deploy:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span> <span class="string">source</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/checkout@v4</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">submodules:</span> <span class="string">recursive</span></span><br><span class="line"></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Setup</span> <span class="string">Node.js</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/setup-node@v4</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">node-version:</span> <span class="number">20</span></span><br><span class="line"></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">dependencies</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line"></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span> <span class="string">Hexo</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">          npx hexo clean</span></span><br><span class="line"><span class="string">          npx hexo generate</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Configure</span> <span class="string">SSH</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">          mkdir -p ~/.ssh</span></span><br><span class="line"><span class="string">          echo &quot;$&#123;&#123; secrets.ALIYUN_SSH_KEY &#125;&#125;&quot; &gt; ~/.ssh/id_ed25519</span></span><br><span class="line"><span class="string">          chmod 600 ~/.ssh/id_ed25519</span></span><br><span class="line"><span class="string">          ssh-keyscan -H -p &quot;$&#123;&#123; secrets.ALIYUN_PORT &#125;&#125;&quot; &quot;$&#123;&#123; secrets.ALIYUN_HOST &#125;&#125;&quot; &gt;&gt; ~/.ssh/known_hosts</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span> <span class="string">to</span> <span class="string">Aliyun</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">          rsync -az --delete \</span></span><br><span class="line"><span class="string">            -e &quot;ssh -p $&#123;&#123; secrets.ALIYUN_PORT &#125;&#125;&quot; \</span></span><br><span class="line"><span class="string">            public/ \</span></span><br><span class="line"><span class="string">            $&#123;&#123; secrets.ALIYUN_USER &#125;&#125;@$&#123;&#123; secrets.ALIYUN_HOST &#125;&#125;:/www/wwwroot/fcmmm.xyz/main/</span></span><br></pre></td></tr></table></figure>
+
+<p>如果你的主分支是 <code>master</code>，把：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">branches:</span> [<span class="string">main</span>]</span><br></pre></td></tr></table></figure>
+
+<p>改成：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">branches:</span> [<span class="string">master</span>]</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="九、手动测试部署是否成功"><a href="#九、手动测试部署是否成功" class="headerlink" title="九、手动测试部署是否成功"></a>九、手动测试部署是否成功</h1><p>仓库 push 后，去 GitHub 仓库查看：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Actions → Deploy ...</span><br></pre></td></tr></table></figure>
+
+<p>如果显示绿色成功，再登录服务器检查：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -la /www/wwwroot/fcmmm.xyz/main/</span><br></pre></td></tr></table></figure>
+
+<p>必须看到：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/www/wwwroot/fcmmm.xyz/main/index.html</span><br></pre></td></tr></table></figure>
+
+<p>然后测试 Nginx：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nginx -t</span><br><span class="line">systemctl reload nginx</span><br></pre></td></tr></table></figure>
+
+<p>浏览器访问：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://fcmmm.xyz/</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="十、完整操作顺序"><a href="#十、完整操作顺序" class="headerlink" title="十、完整操作顺序"></a>十、完整操作顺序</h1><p>按这个顺序做：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">1. 宝塔创建 fcmmm.xyz 网站</span><br><span class="line">2. 创建 /www/wwwroot/fcmmm.xyz/main/</span><br><span class="line">3. 配置宝塔 Nginx</span><br><span class="line">4. nginx -t</span><br><span class="line">5. systemctl reload nginx</span><br><span class="line">6. 创建 deploy 用户</span><br><span class="line">7. 配置 deploy 的 SSH 公钥</span><br><span class="line">8. 本地确认 ssh -i github-actions-deploy-xxx deploy@114.215.125.28 能登录</span><br><span class="line">9. 给 /www/wwwroot/fcmmm.xyz 授权给 deploy</span><br><span class="line">10. 两个 GitHub 仓库分别添加 Secrets</span><br><span class="line">11. xxx.github.io 添加 Hexo 部署 workflow</span><br><span class="line">12. push 仓库</span><br><span class="line">13. 检查 GitHub Actions 是否成功</span><br><span class="line">14. 访问 fcmmm.xyz</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="十三、常见问题"><a href="#十三、常见问题" class="headerlink" title="十三、常见问题"></a>十三、常见问题</h1><h2 id="1-deploy-密钥登录失败"><a href="#1-deploy-密钥登录失败" class="headerlink" title="1. deploy 密钥登录失败"></a>1. <code>deploy</code> 密钥登录失败</h2><p>如果：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -i github-actions-deploy-xxx deploy@<span class="number">114</span>.<span class="number">215</span>.<span class="number">125</span>.<span class="number">28</span></span><br></pre></td></tr></table></figure>
+
+<p>报：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Permission denied</span><br></pre></td></tr></table></figure>
+
+<p>重新在服务器执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /home/deploy/.ssh</span><br><span class="line"><span class="built_in">touch</span> /home/deploy/.ssh/authorized_keys</span><br><span class="line"><span class="built_in">chown</span> -R deploy:deploy /home/deploy/.ssh</span><br><span class="line"><span class="built_in">chmod</span> 700 /home/deploy/.ssh</span><br><span class="line"><span class="built_in">chmod</span> 600 /home/deploy/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+
+<p>然后 Windows CMD 再执行：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> github-actions-deploy-xxx.pub | ssh root@<span class="number">114</span>.<span class="number">215</span>.<span class="number">125</span>.<span class="number">28</span> &quot;cat &gt;&gt; /home/deploy/.ssh/authorized_keys &amp;&amp; chown -R deploy:deploy /home/deploy/.ssh &amp;&amp; chmod <span class="number">700</span> /home/deploy/.ssh &amp;&amp; chmod <span class="number">600</span> /home/deploy/.ssh/authorized_keys&quot;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="2-GitHub-Actions-报-Permission-denied"><a href="#2-GitHub-Actions-报-Permission-denied" class="headerlink" title="2. GitHub Actions 报 Permission denied"></a>2. GitHub Actions 报 <code>Permission denied</code></h2><p>服务器执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chown</span> -R deploy:deploy /www/wwwroot/fcmmm.xyz</span><br><span class="line"><span class="built_in">chmod</span> -R 755 /www/wwwroot/fcmmm.xyz</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<hr>
+<h2 id="最终结果"><a href="#最终结果" class="headerlink" title="最终结果"></a>最终结果</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">→ GitHub Actions 构建 Hexo</span><br><span class="line">→ public/</span><br><span class="line">→ /www/wwwroot/fcmmm.xyz/main/</span><br><span class="line">→ https://fcmmm.xyz/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>只要 <code>deploy</code> 用户能用密钥登录，并且两个仓库的 Secrets 配置正确，之后每次 push 到 GitHub，都会自动部署到阿里云服务器。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://fcmmm.xyz">Jta</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://fcmmm.xyz/p/3479128065/">https://fcmmm.xyz/p/3479128065/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://fcmmm.xyz" target="_blank">Fcmmm's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%BC%80%E5%8F%91%E5%BF%83%E5%BE%97/">开发心得</a></div><div class="post-share"><div class="social-share" data-image="/images/covers/cover-061.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.4/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.4/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/p/2229667824/" title="6.5随记"><img class="cover" src="/images/covers/cover-041.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">6.5随记</div></div><div class="info-2"><div class="info-item-1">功能更新1.新增登录功能，这样就可以在移动端发布文章，解决只能在pc端发布部署。访问管理员登录登录后台 2.完善音乐页面，通过网易云api获取音乐列表，实现音乐播放功能 </div></div></div></a><a class="pagination-related" href="/p/3479234065/" title="音乐播放功能完善"><img class="cover" src="/images/covers/cover-051.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">音乐播放功能完善</div></div><div class="info-2"><div class="info-item-1">完善部分功能 1.将网易云api接入到服务器中，提升加载速度，并且可以听完整歌曲  初始部署到vercel中，但感觉太慢了，然后尝试部署到服务器中。。。  2.修复歌词显示异常问题  3.新增音乐悬浮窗  4.待完善功能：评论功能优化，实现游客评论功能 </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/p/vibe-coding-reflection/" title="博客介绍"><img class="cover" src="/images/covers/cover-031.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">博客介绍</div></div><div class="info-2"><div class="info-item-1">这个网站——从 Hexo 框架搭建、Butterfly 主题配置、文章的生成、评论系统（Giscus）接入、到 GitHub Pages + 阿里云自定义域名部署——大部分由 Claude Code + DeepSeek V4 Pro 在约两小时内完成。   参考链接：安装 Claude Code + 接入DeepSeek V4 + VSCode中使用（无坑版）  </div></div></div></a><a class="pagination-related" href="/p/2229667824/" title="6.5随记"><img class="cover" src="/images/covers/cover-041.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-05</div><div class="info-item-2">6.5随记</div></div><div class="info-2"><div class="info-item-1">功能更新1.新增登录功能，这样就可以在移动端发布文章，解决只能在pc端发布部署。访问管理员登录登录后台 2.完善音乐页面，通过网易云api获取音乐列表，实现音乐播放功能 </div></div></div></a><a class="pagination-related" href="/p/3479234065/" title="音乐播放功能完善"><img class="cover" src="/images/covers/cover-051.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-17</div><div class="info-item-2">音乐播放功能完善</div></div><div class="info-2"><div class="info-item-1">完善部分功能 1.将网易云api接入到服务器中，提升加载速度，并且可以听完整歌曲  初始部署到vercel中，但感觉太慢了，然后尝试部署到服务器中。。。  2.修复歌词显示异常问题  3.新增音乐悬浮窗  4.待完善功能：评论功能优化，实现游客评论功能 </div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Jta</div><div class="author-info-description">LINK START!</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" href="/"><i class="fa fa-house"></i><span>前往主页</span></a><div class="card-info-social-icons"><a class="social-icon" href="mailto:1741322913@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a><a class="social-icon" href="https://wpa.qq.com/msgrd?v=3&amp;uin=1741322913&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq" style="color: #2aa7e3;"></i></a><a class="social-icon" href="https://space.bilibili.com/290674578" target="_blank" title="B站"><i class="fab fa-bilibili" style="color: #00a4da;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客！技术分享、生活记录和开发心得都会写在这里～<br><br>如果出现非正常现象，请 Ctrl+F5 强制刷新或更换 Chrome、Edge、Firefox 浏览器。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8A%E5%A4%A9%E6%8A%8A%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%9C%A8%E4%BA%86%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8300%E5%85%83%E4%BC%98%E6%83%A0%E5%88%B8%EF%BC%8C%E5%A4%A7%E4%BD%93%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">今天把项目部署在了阿里云服务器上阿里云服务器300元优惠券，大体过程：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9B%AE%E5%BD%95%E5%87%86%E5%A4%87"><span class="toc-number">2.</span> <span class="toc-text">一、服务器目录准备</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%88%9B%E5%BB%BA-deploy-%E9%83%A8%E7%BD%B2%E7%94%A8%E6%88%B7"><span class="toc-number">3.</span> <span class="toc-text">二、创建 deploy 部署用户</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81Windows-%E6%9C%AC%E5%9C%B0%E7%94%9F%E6%88%90-SSH-%E5%AF%86%E9%92%A5"><span class="toc-number">4.</span> <span class="toc-text">三、Windows 本地生成 SSH 密钥</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%8A%8A%E5%85%AC%E9%92%A5%E5%86%99%E5%85%A5%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">5.</span> <span class="toc-text">四、把公钥写入服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%AE%9D%E5%A1%94-Nginx-%E9%85%8D%E7%BD%AE"><span class="toc-number">6.</span> <span class="toc-text">五、宝塔 Nginx 配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E4%B8%BB%E9%A1%B9%E7%9B%AE-Hexo-Butterfly-%E9%85%8D%E7%BD%AE"><span class="toc-number">7.</span> <span class="toc-text">六、主项目 Hexo + Butterfly 配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%83%E3%80%81GitHub-Secrets-%E9%85%8D%E7%BD%AE"><span class="toc-number">8.</span> <span class="toc-text">七、GitHub Secrets 配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E4%B8%BB%E9%A1%B9%E7%9B%AE-xxx-github-io-%E7%9A%84-GitHub-Actions"><span class="toc-number">9.</span> <span class="toc-text">八、主项目 xxx.github.io 的 GitHub Actions</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E6%89%8B%E5%8A%A8%E6%B5%8B%E8%AF%95%E9%83%A8%E7%BD%B2%E6%98%AF%E5%90%A6%E6%88%90%E5%8A%9F"><span class="toc-number">10.</span> <span class="toc-text">九、手动测试部署是否成功</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%81%E3%80%81%E5%AE%8C%E6%95%B4%E6%93%8D%E4%BD%9C%E9%A1%BA%E5%BA%8F"><span class="toc-number">11.</span> <span class="toc-text">十、完整操作顺序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%81%E4%B8%89%E3%80%81%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">12.</span> <span class="toc-text">十三、常见问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-deploy-%E5%AF%86%E9%92%A5%E7%99%BB%E5%BD%95%E5%A4%B1%E8%B4%A5"><span class="toc-number">12.1.</span> <span class="toc-text">1. deploy 密钥登录失败</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-GitHub-Actions-%E6%8A%A5-Permission-denied"><span class="toc-number">12.2.</span> <span class="toc-text">2. GitHub Actions 报 Permission denied</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E7%BB%93%E6%9E%9C"><span class="toc-number">12.3.</span> <span class="toc-text">最终结果</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/p/3479234065/" title="音乐播放功能完善"><img src="/images/covers/cover-051.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="音乐播放功能完善"/></a><div class="content"><a class="title" href="/p/3479234065/" title="音乐播放功能完善">音乐播放功能完善</a><time datetime="2026-06-17T09:34:00.000Z" title="发表于 2026-06-17 17:34:00">2026-06-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/p/3479128065/" title="将项目部署至服务器"><img src="/images/covers/cover-061.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="将项目部署至服务器"/></a><div class="content"><a class="title" href="/p/3479128065/" title="将项目部署至服务器">将项目部署至服务器</a><time datetime="2026-06-16T12:00:00.000Z" title="发表于 2026-06-16 20:00:00">2026-06-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/p/2229667824/" title="6.5随记"><img src="/images/covers/cover-041.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="6.5随记"/></a><div class="content"><a class="title" href="/p/2229667824/" title="6.5随记">6.5随记</a><time datetime="2026-06-05T10:29:02.000Z" title="发表于 2026-06-05 18:29:02">2026-06-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/p/vibe-coding-reflection/" title="博客介绍"><img src="/images/covers/cover-031.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="博客介绍"/></a><div class="content"><a class="title" href="/p/vibe-coding-reflection/" title="博客介绍">博客介绍</a><time datetime="2026-05-28T01:20:00.000Z" title="发表于 2026-05-28 09:20:00">2026-05-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/p/129012965/" title="Git 工作流程最佳实践"><img src="/images/covers/cover-001.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Git 工作流程最佳实践"/></a><div class="content"><a class="title" href="/p/129012965/" title="Git 工作流程最佳实践">Git 工作流程最佳实践</a><time datetime="2026-05-28T00:30:00.000Z" title="发表于 2026-05-28 08:30:00">2026-05-28</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2026 By Jta</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text"><a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener">鲁ICP备2026034749号</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-music-btn" type="button" title="音乐馆" onclick="window.pjax.loadUrl('/music/')"><i class="fas fa-music"></i></button><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.3.2"></script><script src="/js/main.js?v=5.3.2"></script><script src="/js/tw_cn.js?v=5.3.2"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'Fcmmm/Fcmmm.github.io',
+      'data-repo-id': 'R_kgDOSqHvlA',
+      'data-category-id': 'DIC_kwDOSqHvlM4C-AMX',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script id="canvas_nest" defer="defer" color="0,200,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.4/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.4/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.4/dist/click-show-text.min.js" data-mobile="false" data-text="Hi~,Welcome!,LINK START!,(*^▽^*),Hello" data-fontsize="15px" data-random="true" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script>(function () {
+  if (typeof window.APlayer === 'undefined') return
+  var Orig = window.APlayer
+  window.APlayer = function (opts) {
+    // 修复 Meting.js 传过来的 lrcType 可能是字符串的问题
+    if (opts.lrcType !== undefined && typeof opts.lrcType !== 'number') {
+      opts.lrcType = parseInt(opts.lrcType, 10) || 0
+    }
+    // 非悬浮窗（完整播放器）默认显示歌词翻译
+    if (!opts.fixed && !opts.mini) {
+      if (!opts.lrcType) opts.lrcType = 3
+    }
+    return new Orig(opts)
+  }
+  window.APlayer.prototype = Orig.prototype
+  for (var k in Orig) {
+    if (Orig.hasOwnProperty(k)) window.APlayer[k] = Orig[k]
+  }
+})()</script><script src="https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js"></script><div id="music-float-player"><meting-js server="netease" type="playlist" id="2309860218" api="https://fcmmm.xyz/api/music?server=:server&amp;type=:type&amp;id=:id" fixed="true" mini="true" autoplay="false" theme="#49B1F5" loop="all" order="random" volume="0.7"></meting-js></div><script>(function checkMeting() {
+  var el = document.querySelector('#music-float-player meting-js');
+  if (!el || !el.meting || !el.meting.aplayer) {
+    if (typeof MetingJSElement !== 'undefined') {
+      try {
+        var m = new MetingJSElement();
+        m.setAttribute('server', 'netease');
+        m.setAttribute('type', 'playlist');
+        m.setAttribute('id', '2309860218');
+        m.setAttribute('api', 'https://fcmmm.xyz/api/music?server=:server&type=:type&id=:id');
+        m.setAttribute('fixed', 'true');
+        m.setAttribute('mini', 'true');
+        m.setAttribute('autoplay', 'false');
+        m.setAttribute('theme', '#49B1F5');
+        m.setAttribute('loop', 'all');
+        m.setAttribute('order', 'random');
+        m.setAttribute('volume', '0.7');
+        document.getElementById('music-float-player').appendChild(m);
+      } catch(e) {}
+    }
+  }
+})();
+</script><script>(() => {
+  btf.addGlobalFn('pjaxSend', () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) window.aplayers[i].destroy()
+      }
+    }
+  }, 'destroyAplayer')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["link[rel=\"canonical\"]","meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      pjax.loadUrl('/404')
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章..." type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.3.2"></script></div></div></body></html>
