@@ -1,4 +1,4 @@
-link(rel='stylesheet' href=url_for(theme.asset.aplayer_css) media="print" onload="this.media='all'")
+link(rel='stylesheet' href=url_for(theme.asset.aplayer_css))
 script(src=url_for(theme.asset.aplayer_js))
 script.
   (function () {
@@ -37,6 +37,31 @@ script(src=url_for(theme.asset.meting_js))
     order="random"
     volume="0.7"
   )
+
+//- 首次加载未渲染时，延迟重试
+script.
+  (function checkMeting() {
+    var el = document.querySelector('#music-float-player meting-js');
+    if (!el || !el.meting || !el.meting.aplayer) {
+      if (typeof MetingJSElement !== 'undefined') {
+        try {
+          var m = new MetingJSElement();
+          m.setAttribute('server', 'netease');
+          m.setAttribute('type', 'playlist');
+          m.setAttribute('id', '2309860218');
+          m.setAttribute('api', 'https://fcmmm.xyz/api/music?server=:server&type=:type&id=:id');
+          m.setAttribute('fixed', 'true');
+          m.setAttribute('mini', 'true');
+          m.setAttribute('autoplay', 'false');
+          m.setAttribute('theme', '#49B1F5');
+          m.setAttribute('loop', 'all');
+          m.setAttribute('order', 'random');
+          m.setAttribute('volume', '0.7');
+          document.getElementById('music-float-player').appendChild(m);
+        } catch(e) {}
+      }
+    }
+  })();
 
 if theme.pjax.enable
   script.
