@@ -58,6 +58,9 @@ style.
   #music-player-wrap .aplayer .aplayer-list ol li.aplayer-list-light { background: rgba(73,177,245,.08) !important; }
   #music-player-wrap .aplayer .aplayer-info .aplayer-music { color: var(--font-color, #333) !important; }
   #music-player-wrap .aplayer .aplayer-lrc { color: var(--font-color, #666) !important; }
+  /* 本页已有完整歌词区，隐藏悬浮窗歌词浮层：
+     同步逻辑会暂停悬浮窗，其歌词会冻结在第一行与页面歌词重叠 */
+  .aplayer.aplayer-fixed .aplayer-lrc { display: none !important; }
   #music-player-wrap .aplayer .aplayer-lrc:before, #music-player-wrap .aplayer .aplayer-lrc:after { background: var(--card-bg, #fff) !important; }
   [data-theme="dark"] #music-player-wrap .aplayer { background: #1e1e1e !important; }
   [data-theme="dark"] .music-container { background: #1e1e1e; }

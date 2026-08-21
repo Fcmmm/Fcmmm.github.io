@@ -12,10 +12,6 @@ script.
       // 非悬浮窗（完整播放器）默认显示歌词翻译
       if (!opts.fixed && !opts.mini) {
         if (!opts.lrcType) opts.lrcType = 3
-      } else if (opts.fixed) {
-        // 悬浮窗不显示歌词：Meting 默认 lrcType=3，会让 fixed 播放器
-        // 在页面底部浮出一层歌词遮罩，无歌词时一直显示 "Not available"
-        opts.lrcType = 0
       }
       return new Orig(opts)
     }
@@ -27,10 +23,6 @@ script.
 script(src=url_for(theme.asset.meting_js))
 
 //- 全局悬浮迷你播放器
-style.
-  // 悬浮窗是迷你播放器，彻底隐藏 APlayer 的 fixed 歌词浮层
-  .aplayer.aplayer-fixed .aplayer-lrc { display: none !important; }
-
 #music-float-player
   meting-js(
     server="netease"
