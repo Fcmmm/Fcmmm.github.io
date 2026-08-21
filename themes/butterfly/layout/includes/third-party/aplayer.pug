@@ -13,7 +13,15 @@ script.
       if (!opts.fixed && !opts.mini) {
         if (!opts.lrcType) opts.lrcType = 3
       }
-      return new Orig(opts)
+      var ap = new Orig(opts)
+      // 维护实例列表（音乐馆页同步脚本依赖 window.aplayers）
+      if (!window.aplayers) window.aplayers = []
+      window.aplayers.push(ap)
+      ap.on('destroy', function () {
+        var i = window.aplayers.indexOf(ap)
+        if (i > -1) window.aplayers.splice(i, 1)
+      })
+      return ap
     }
     window.APlayer.prototype = Orig.prototype
     for (var k in Orig) {
@@ -37,6 +45,23 @@ script(src=url_for(theme.asset.meting_js))
     order="random"
     volume="0.7"
   )
+
+//- 悬浮窗歌词浮层：暂停或无歌词时不显示，播放时只滚动实时歌词
+script.
+  (function watchFloatLrc() {
+    setInterval(function () {
+      var ap = null
+      if (window.aplayers) {
+        for (var i = 0; i < window.aplayers.length; i++) {
+          if (window.aplayers[i].options.fixed) { ap = window.aplayers[i]; break }
+        }
+      }
+      if (!ap || !ap.lrc || !ap.template || !ap.template.lrcWrap) return
+      var c = ap.lrc.current || []
+      var noLrc = !c.length || (c.length === 1 && c[0][0] === 0 && /^(暂无歌词|Not available)$/.test(c[0][1]))
+      ap.template.lrcWrap.style.display = (ap.paused || noLrc) ? 'none' : ''
+    }, 500)
+  })();
 
 //- 首次加载未渲染时，延迟重试
 script.

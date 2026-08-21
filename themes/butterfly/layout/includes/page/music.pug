@@ -134,4 +134,13 @@ script.
         // 不调用 local.play() — 悬浮窗继续播放不受干扰
       }
     }, 300)
+
+    // 无歌词时隐藏歌词区：只显示能正常滚动的歌词
+    setInterval(function () {
+      var local = getLocalAP()
+      if (!local || !local.lrc || !local.template || !local.template.lrcWrap) return
+      var c = local.lrc.current || []
+      var noLrc = !c.length || (c.length === 1 && c[0][0] === 0 && /^(暂无歌词|Not available)$/.test(c[0][1]))
+      local.template.lrcWrap.style.display = noLrc ? 'none' : ''
+    }, 500)
   })()
