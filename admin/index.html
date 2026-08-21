@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>博客管理后台</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;color:#333;min-height:100vh}
+#login{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.login-card{background:#fff;padding:48px 40px;border-radius:16px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.08);max-width:380px;width:90%}
+.login-card h1{font-size:22px;margin-bottom:8px}
+.login-card p{color:#999;font-size:14px;margin-bottom:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border:none;border-radius:10px;font-size:15px;cursor:pointer;transition:.2s}
+.btn-dark{background:#24292e;color:#fff}
+.btn-dark:hover{background:#1b1f23}
+.btn-primary{background:#49B1F5;color:#fff}
+.btn-primary:hover{background:#3a8fd4}
+.btn-danger{background:#e74c3c;color:#fff}
+.btn-danger:hover{background:#c0392b}
+.btn-sm{padding:6px 14px;font-size:13px}
+.btn-outline{padding:6px 14px;font-size:13px;background:transparent;border:1.5px solid #ddd;color:#666}
+.btn-outline:hover{background:#f5f5f5}
+#app{display:none;height:100vh}
+#app.mobile{flex-direction:column}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#fff;border-bottom:1px solid #eee}
+.header h2{font-size:16px}
+
+/* Tab Navigation */
+.tab-nav{display:flex;border-bottom:2px solid #eee;background:#fff}
+.tab-nav button{flex:1;padding:14px 20px;border:none;background:transparent;font-size:15px;font-weight:600;color:#999;cursor:pointer;transition:.2s;border-bottom:2px solid transparent;margin-bottom:-2px;position:relative}
+.tab-nav button:hover{color:#666}
+.tab-nav button.active{color:#49B1F5;border-bottom-color:#49B1F5}
+
+.sidebar{width:280px;background:#fff;border-right:1px solid #eee;overflow-y:auto;flex-shrink:0}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+.sidebar-header span{font-weight:600;font-size:15px}
+.post-item{padding:14px 20px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .15s}
+.post-item:hover{background:#f8f9fa}
+.post-item.active{background:#e8f4fd;border-left:3px solid #49B1F5}
+.post-item .title{font-size:14px;font-weight:500;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post-item .meta{font-size:12px;color:#999}
+.main{flex:1;overflow-y:auto;padding:24px 32px}
+.editor{max-width:800px;margin:0 auto}
+.editor label{display:block;font-size:13px;font-weight:600;color:#666;margin:16px 0 6px}
+.editor input,.editor textarea,.editor select{width:100%;padding:10px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;transition:border-color .2s}
+.editor input:focus,.editor textarea:focus{border-color:#49B1F5}
+.editor textarea{min-height:320px;font-family:'SF Mono',Consolas,monospace;resize:vertical;line-height:1.6}
+.editor-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.empty-state{text-align:center;padding:60px 20px;color:#999}
+
+/* Gallery Management */
+.gallery-grid-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:16px}
+.gallery-preview-item{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:4/3;background:#eee;cursor:default}
+.gallery-preview-item img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery-preview-item .del-btn{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;background:rgba(231,76,60,.9);color:#fff;border:none;cursor:pointer;font-size:14px;line-height:26px;text-align:center;opacity:0;transition:opacity .2s}
+.gallery-preview-item:hover .del-btn{opacity:1}
+.gallery-upload-zone{border:2px dashed #ddd;border-radius:12px;padding:40px;text-align:center;color:#999;cursor:pointer;transition:.2s;margin-top:16px}
+.gallery-upload-zone:hover{border-color:#49B1F5;color:#49B1F5;background:#f8fbff}
+.gallery-upload-zone i{font-size:36px;margin-bottom:8px;display:block}
+.gallery-sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .15s}
+.gallery-sidebar-item:hover{background:#f8f9fa}
+.gallery-sidebar-item .thumb{width:40px;height:30px;border-radius:4px;object-fit:cover;background:#eee;flex-shrink:0}
+.gallery-sidebar-item .info{flex:1;min-width:0}
+.gallery-sidebar-item .info .name{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gallery-sidebar-item .info .size{font-size:11px;color:#999}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;padding:12px 24px;border-radius:10px;color:#fff;font-size:14px;z-index:9999;animation:slideUp .3s ease}
+.toast-success{background:#27ae60}
+.toast-error{background:#e74c3c}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.layout{display:flex;height:calc(100vh - 93px)}
+@media(max-width:768px){
+.layout{flex-direction:column}
+.sidebar{width:100%;max-height:35vh;overflow-y:auto;border-right:none;border-bottom:2px solid #eee;-webkit-overflow-scrolling:touch}
+.main{padding:12px;overflow-y:auto}
+.post-item{padding:12px 16px}
+.gallery-sidebar-item{padding:10px 16px}
+.editor input,.editor textarea{font-size:16px}
+.editor textarea{min-height:200px}
+.header{padding:8px 16px}
+.tab-nav button{font-size:14px;padding:12px 16px}
+}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="login-card">
+    <h1>博客管理后台</h1>
+    <p>使用 GitHub 账号登录以管理博客内容</p>
+    <button class="btn btn-dark" onclick="openAuth()">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      使用 GitHub 登录
+    </button>
+  </div>
+</div>
+
+<div id="app">
+  <div class="header">
+    <h2> 博客管理后台</h2>
+    <button class="btn btn-sm btn-danger" onclick="logout()">退出</button>
+  </div>
+  <!-- Tab 导航 -->
+  <div class="tab-nav">
+    <button id="tab-posts" class="active" onclick="switchTab('posts')">  文章管理</button>
+    <button id="tab-gallery" onclick="switchTab('gallery')">  图库管理</button>
+  </div>
+  <div class="layout">
+    <!-- 文章列表侧栏 -->
+    <div class="sidebar" id="sidebar-posts">
+      <div class="sidebar-header">
+        <span>文章列表</span>
+        <button class="btn btn-sm btn-primary" onclick="newPost()">+ 新建</button>
+      </div>
+      <div id="post-list"></div>
+    </div>
+    <!-- 图库列表侧栏 -->
+    <div class="sidebar" id="sidebar-gallery" style="display:none">
+      <div class="sidebar-header">
+        <span>图库图片</span>
+        <button class="btn btn-sm btn-primary" onclick="uploadGalleryImage()">+ 上传</button>
+      </div>
+      <div id="gallery-list"></div>
+    </div>
+    <!-- 主编辑区 -->
+    <div class="main">
+      <div class="editor" id="editor">
+        <div class="empty-state">选择文章进行编辑，或点击"新建"</div>
+      </div>
+      <div class="editor" id="gallery-editor" style="display:none">
+        <div id="gallery-main-view"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+// ---- State ----
+var TOKEN = sessionStorage.getItem('gh_token') || '';
+var POSTS = [];
+var CURRENT = null; // currently editing post
+var CURRENT_TAB = 'posts'; // 'posts' | 'gallery'
+var GALLERY_DATA = null; // { sha, content, images: [] }
+
+// ---- Auth ----
+function openAuth() {
+  var w = 600, h = 700;
+  var left = (screen.width - w) / 2;
+  var top = (screen.height - h) / 2;
+  window.open(
+    'https://vercel-api-ten-sigma.vercel.app/api/auth',
+    'github_auth',
+    'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top
+  );
+}
+
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.token) saveToken(e.data.token);
+});
+
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var t = params.get('access_token') || params.get('token');
+  if (t) { saveToken(t); window.history.replaceState({}, '', '/admin/'); }
+  if (TOKEN) showApp();
+})();
+
+function saveToken(token) {
+  TOKEN = token;
+  sessionStorage.setItem('gh_token', token);
+  showApp();
+}
+
+function logout() {
+  sessionStorage.removeItem('gh_token');
+  TOKEN = '';
+  POSTS = [];
+  CURRENT = null;
+  GALLERY_DATA = null;
+  document.getElementById('login').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+// ---- GitHub API ----
+function gh(path, method, body) {
+  method = method || 'GET';
+  var opts = {
+    method: method,
+    headers: {
+      'Authorization': 'token ' + TOKEN,
+      'Accept': 'application/vnd.github.v3+json'
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  return fetch('https://api.github.com/repos/Fcmmm/Fcmmm.github.io' + path, opts)
+    .then(function(r) {
+      if (!r.ok) throw new Error('GitHub API error: ' + r.status);
+      return r.json();
+    });
+}
+
+// ---- Tab Switching ----
+function switchTab(tab) {
+  CURRENT_TAB = tab;
+  document.getElementById('tab-posts').classList.toggle('active', tab === 'posts');
+  document.getElementById('tab-gallery').classList.toggle('active', tab === 'gallery');
+  document.getElementById('sidebar-posts').style.display = tab === 'posts' ? '' : 'none';
+  document.getElementById('sidebar-gallery').style.display = tab === 'gallery' ? '' : 'none';
+
+  if (tab === 'posts') {
+    document.getElementById('editor').style.display = '';
+    document.getElementById('gallery-editor').style.display = 'none';
+    if (!POSTS.length) loadPosts();
+  } else {
+    document.getElementById('editor').style.display = 'none';
+    document.getElementById('gallery-editor').style.display = '';
+    loadGalleryData();
+  }
+}
+
+// ============ 文章管理 ============
+function loadPosts() {
+  gh('/contents/source/_posts?ref=source').then(function(files) {
+    POSTS = (files || []).filter(function(f) { return f.name.endsWith('.md'); });
+    renderPostList();
+  }).catch(function(e) {
+    toast('加载文章列表失败: ' + e.message, 'error');
+  });
+}
+
+function renderPostList() {
+  var container = document.getElementById('post-list');
+  if (!POSTS.length) {
+    container.innerHTML = '<div class="empty-state" style="padding:30px">暂无文章</div>';
+    return;
+  }
+  container.innerHTML = POSTS.map(function(p, i) {
+    var active = CURRENT && CURRENT.name === p.name ? ' active' : '';
+    return '<div class="post-item' + active + '" onclick="editPost(' + i + ')">' +
+      '<div class="title">' + escHtml(p.name.replace('.md','')) + '</div>' +
+      '<div class="meta">' + p.size + ' bytes</div>' +
+      '</div>';
+  }).join('');
+}
+
+function newPost() {
+  var now = new Date();
+  var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
+  var dateStr = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) +
+    ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  var nameStr = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + '-new-post.md';
+  var bodyTemplate = '## 标题\n\n正文内容...\n\n<!-- more -->\n\n## 小标题\n\n更多内容...\n';
+  var fm = '---\ntitle: \ndate: ' + dateStr + '\ncategories: \ntags:\n  - \ncover: \'\'\n---\n' + bodyTemplate;
+  CURRENT = { name: nameStr, content: fm, sha: null, isNew: true };
+  renderEditor();
+}
+
+function editPost(idx) {
+  var file = POSTS[idx];
+  gh('/contents/source/_posts/' + file.name + '?ref=source').then(function(data) {
+    var raw = atob(data.content);
+    var bytes = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i) & 0xff;
+    var content = new TextDecoder('utf-8').decode(bytes);
+    CURRENT = { name: file.name, content: content, sha: data.sha, isNew: false };
+    renderEditor();
+    renderPostList();
+  }).catch(function(e) {
+    toast('加载文章失败: ' + e.message, 'error');
+  });
+}
+
+function renderEditor() {
+  if (!CURRENT) {
+    document.getElementById('editor').innerHTML = '<div class="empty-state">选择文章进行编辑，或点击"新建"</div>';
+    return;
+  }
+
+  var content = CURRENT.content || '';
+  var front = parseFrontmatter(content);
+
+  var html = '';
+  html += '<label>文件名</label>';
+  html += '<input id="fn" value="' + escAttr(CURRENT.name || '') + '" placeholder="2026-06-01-my-post.md">';
+  html += '<label>标题</label>';
+  html += '<input id="ftitle" value="' + escAttr(front.title || '') + '" placeholder="文章标题">';
+  html += '<label>日期</label>';
+  html += '<input id="fdate" value="' + escAttr(front.date || '') + '" placeholder="YYYY-MM-DD HH:mm:ss">';
+  html += '<label>分类</label>';
+  html += '<input id="fcats" value="' + escAttr(front.categories || '') + '" placeholder="如：生活记录">';
+  html += '<label>标签（逗号分隔）</label>';
+  html += '<input id="ftags" value="' + escAttr((front.tags || []).join ? (front.tags || []).join(', ') : (front.tags || '')) + '" placeholder="生活记录, 开发心得, AI..." list="tags-list" autocomplete="off">';
+  html += '<datalist id="tags-list">';
+  ['生活记录','开发心得','Vibe Coding','Claude Code','AI','DeepSeek','编程','教程','前端开发','后端开发','DevOps','Linux','Git','Markdown','Hexo','JavaScript','Python','Docker','技术文档','信息技术','开源软件','代码块','版本控制','CSS','提问技巧'].forEach(function(t) {
+    html += '<option value="' + t + '">';
+  });
+  html += '</datalist>';
+  html += '<label>封面图 URL</label>';
+  html += '<input id="fcover" value="' + escAttr(front.cover || '') + '" placeholder="https://picsum.photos/seed/xxx/800/400 或 /img/uploads/xxx.jpg" list="cover-list">';
+  html += '<datalist id="cover-list">';
+  html += '<option value="https://picsum.photos/seed/cover/800/400">';
+  html += '<option value="https://picsum.photos/seed/nature/800/400">';
+  html += '<option value="https://picsum.photos/seed/code/800/400">';
+  html += '<option value="/img/uploads/">';
+  html += '</datalist>';
+  html += '<label>正文（Markdown）</label>';
+  html += '<textarea id="fbody">' + escHtml(front.body || '') + '</textarea>';
+  html += '<div class="editor-actions">';
+  html += '<button class="btn btn-primary" onclick="savePost()">保存并发布</button>';
+  html += '<button class="btn btn-sm" style="background:#eee;color:#666" onclick="uploadImage()">上传图片</button>';
+  html += '<button class="btn btn-sm" style="background:#eee;color:#666" onclick="CURRENT=null;renderEditor();renderPostList()">取消</button>';
+  html += '</div>';
+
+  document.getElementById('editor').innerHTML = html;
+}
+
+function parseFrontmatter(md) {
+  var result = { body: md || '' };
+  if (!md || !md.startsWith('---')) return result;
+  var end = md.indexOf('---', 4);
+  if (end === -1) return result;
+  var fm = md.substring(4, end);
+  result.body = md.substring(end + 3).trim();
+  var lines = fm.split('\n');
+  var tags = [];
+  var inTags = false;
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    var m = line.match(/^(\w+):\s*(.*)/);
+    if (m) {
+      inTags = false;
+      if (m[1] === 'tags') {
+        inTags = true;
+        if (m[2].trim()) tags.push(m[2].trim());
+      } else {
+        result[m[1]] = m[2].trim().replace(/^['"]|['"]$/g, '');
+      }
+    } else if (inTags) {
+      var tm = line.match(/^\s*-\s*(.*)/);
+      if (tm) tags.push(tm[1].trim().replace(/^['"]|['"]$/g, ''));
+    }
+  }
+  if (tags.length) result.tags = tags;
+  return result;
+}
+
+function buildFrontmatter() {
+  var title = document.getElementById('ftitle').value.trim();
+  var date = document.getElementById('fdate').value.trim();
+  var cats = document.getElementById('fcats').value.trim();
+  var tags = document.getElementById('ftags').value.trim();
+  var cover = document.getElementById('fcover').value.trim();
+  var body = document.getElementById('fbody').value;
+  var lines = ['---'];
+  if (title) lines.push('title: ' + title);
+  if (date) lines.push('date: ' + date);
+  if (cats) lines.push('categories: ' + cats);
+  if (tags) {
+    lines.push('tags:');
+    tags.split(',').forEach(function(t) {
+      var tt = t.trim();
+      if (tt) lines.push('  - ' + tt);
+    });
+  }
+  if (cover) lines.push("cover: '" + cover + "'");
+  lines.push('---');
+  lines.push('');
+  lines.push(body);
+  return lines.join('\n');
+}
+
+function savePost() {
+  var name = document.getElementById('fn').value.trim();
+  var content = buildFrontmatter();
+  if (!name) { toast('请输入文件名', 'error'); return; }
+  if (!name.endsWith('.md')) name += '.md';
+  var body = {
+    message: name.replace('.md','') + ' 更新',
+    content: utf8ToBase64(content),
+    branch: 'source'
+  };
+  if (CURRENT.sha) body.sha = CURRENT.sha;
+  gh('/contents/source/_posts/' + name, 'PUT', body).then(function() {
+    toast('发布成功！GitHub Actions 将自动部署');
+    CURRENT = null;
+    loadPosts();
+    renderEditor();
+  }).catch(function(e) {
+    toast('发布失败: ' + e.message, 'error');
+  });
+}
+
+function uploadImage() {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = function() {
+    var file = input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function() {
+      var base64 = reader.result.split(',')[1];
+      var path = 'source/img/uploads/' + Date.now() + '_' + file.name;
+      gh('/contents/' + path, 'PUT', {
+        message: 'Upload image ' + file.name,
+        content: base64,
+        branch: 'source'
+      }).then(function() {
+        var url = '/img/uploads/' + path.split('/').pop();
+        var ta = document.getElementById('fbody');
+        if (ta) ta.value += '\n![](' + url + ')';
+        toast('图片上传成功');
+      }).catch(function(e) {
+        toast('上传失败: ' + e.message, 'error');
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+// ============ 图库管理 ============
+function loadGalleryData() {
+  gh('/contents/source/_data/gallery.yml?ref=source').then(function(data) {
+    var raw = atob(data.content);
+    var bytes = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i) & 0xff;
+    var content = new TextDecoder('utf-8').decode(bytes);
+    GALLERY_DATA = { sha: data.sha, content: content, images: parseGalleryYaml(content) };
+    renderGalleryList();
+    renderGalleryMain();
+  }).catch(function(e) {
+    toast('加载图库数据失败: ' + e.message, 'error');
+  });
+}
+
+function parseGalleryYaml(yaml) {
+  var images = [];
+  var lines = yaml.split('\n');
+  var inImages = false;
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    if (/^images:/.test(line)) {
+      inImages = true;
+      continue;
+    }
+    if (inImages) {
+      var m = line.match(/^\s*-\s*(.+)/);
+      if (m) {
+        var url = m[1].trim().replace(/^['"]|['"]$/g, '');
+        if (url && !url.startsWith('#')) images.push(url);
+      } else if (/^\w/.test(line)) {
+        inImages = false;
+      }
+    }
+  }
+  return images;
+}
+
+function buildGalleryYaml(images) {
+  var lines = [];
+  // Preserve worker_url section
+  var content = GALLERY_DATA ? GALLERY_DATA.content : '';
+  var existingLines = content.split('\n');
+  var inImages = false;
+  var beforeImages = [];
+  var afterImages = [];
+  for (var i = 0; i < existingLines.length; i++) {
+    var line = existingLines[i];
+    if (/^images:/.test(line)) {
+      inImages = true;
+      continue;
+    }
+    if (!inImages) {
+      beforeImages.push(line);
+    } else {
+      if (!afterImages.length && /^\w/.test(line) && !/^\s*-\s*/.test(line) && !/^\s*#/.test(line)) {
+        afterImages.push(line);
+      } else if (afterImages.length) {
+        afterImages.push(line);
+      }
+    }
+  }
+  // Build new content
+  var result = beforeImages.join('\n');
+  result += '\nimages:';
+  if (images.length) {
+    images.forEach(function(url) {
+      result += '\n  - ' + url;
+    });
+  } else {
+    result += '\n  # - /img/gallery/example.jpg';
+  }
+  if (afterImages.length) result += '\n' + afterImages.join('\n');
+  return result;
+}
+
+function saveGalleryData(images) {
+  var newContent = buildGalleryYaml(images);
+  var body = {
+    message: '更新图库列表',
+    content: utf8ToBase64(newContent),
+    branch: 'source'
+  };
+  if (GALLERY_DATA && GALLERY_DATA.sha) body.sha = GALLERY_DATA.sha;
+  return gh('/contents/source/_data/gallery.yml', 'PUT', body).then(function(data) {
+    GALLERY_DATA.sha = data.content ? data.content.sha : null;
+    GALLERY_DATA.content = newContent;
+    GALLERY_DATA.images = images;
+  });
+}
+
+function renderGalleryList() {
+  var container = document.getElementById('gallery-list');
+  var images = GALLERY_DATA ? GALLERY_DATA.images : [];
+  if (!images.length) {
+    container.innerHTML = '<div class="empty-state" style="padding:30px">暂无图片，点击上方按钮上传</div>';
+    return;
+  }
+  container.innerHTML = images.map(function(url, i) {
+    var name = url.split('/').pop();
+    return '<div class="gallery-sidebar-item" onclick="selectGalleryImage(' + i + ')">' +
+      '<img class="thumb" src="' + escAttr(url) + '" alt="" onerror="this.style.background=\'#eee\'" />' +
+      '<div class="info"><div class="name">' + escHtml(name) + '</div><div class="size">' + escHtml(url) + '</div></div>' +
+      '</div>';
+  }).join('');
+}
+
+function renderGalleryMain() {
+  var container = document.getElementById('gallery-main-view');
+  var images = GALLERY_DATA ? GALLERY_DATA.images : [];
+  var html = '<h3 style="font-size:16px;margin-bottom:4px">图库管理</h3>';
+  html += '<p style="color:#999;font-size:13px;margin-bottom:8px">共 ' + images.length + ' 张图片 — 点击上传或拖拽图片到下方区域</p>';
+
+  if (images.length) {
+    html += '<div class="gallery-grid-preview">';
+    images.forEach(function(url, i) {
+      html += '<div class="gallery-preview-item">' +
+        '<img src="' + escAttr(url) + '" alt="" loading="lazy" onerror="this.style.background=\'#f0f0f0\'" />' +
+        '<button class="del-btn" title="删除此图" onclick="event.stopPropagation();deleteGalleryImage(' + i + ')">×</button>' +
+        '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '<div class="gallery-upload-zone" onclick="uploadGalleryImage()">';
+  html += '<i>&#128247;</i>';
+  html += '<span>点击上传新图片到图库</span>';
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+function uploadGalleryImage() {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = function() {
+    var file = input.files[0];
+    if (!file) return;
+    toast('正在上传中...');
+    var reader = new FileReader();
+    reader.onload = function() {
+      var base64 = reader.result.split(',')[1];
+      var safeName = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      var path = 'source/img/gallery/' + safeName;
+      gh('/contents/' + path, 'PUT', {
+        message: 'Upload gallery image ' + file.name,
+        content: base64,
+        branch: 'source'
+      }).then(function() {
+        var url = '/img/gallery/' + safeName;
+        var images = GALLERY_DATA ? GALLERY_DATA.images.slice() : [];
+        images.push(url);
+        return saveGalleryData(images);
+      }).then(function() {
+        renderGalleryList();
+        renderGalleryMain();
+        toast('图库图片上传成功！等待 GitHub Actions 部署后生效');
+      }).catch(function(e) {
+        toast('上传失败: ' + e.message, 'error');
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+function deleteGalleryImage(idx) {
+  var images = GALLERY_DATA ? GALLERY_DATA.images.slice() : [];
+  var url = images[idx];
+  if (!confirm('确定要从图库中删除 ' + (url.split('/').pop()) + ' 吗？\n注意：此操作仅从列表中移除，不会删除 GitHub 上的图片文件。')) return;
+  images.splice(idx, 1);
+  saveGalleryData(images).then(function() {
+    renderGalleryList();
+    renderGalleryMain();
+    toast('已从图库列表中移除');
+  }).catch(function(e) {
+    toast('删除失败: ' + e.message, 'error');
+  });
+}
+
+function selectGalleryImage(idx) {
+  var images = GALLERY_DATA ? GALLERY_DATA.images : [];
+  var url = images[idx];
+  if (!url) return;
+  // 复制链接到剪贴板
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(function() {
+      toast('已复制图片链接: ' + url);
+    });
+  } else {
+    toast('图片链接: ' + url);
+  }
+}
+
+// ---- UI ----
+function showApp() {
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadPosts();
+}
+
+function toast(msg, type) {
+  type = type || 'success';
+  var el = document.createElement('div');
+  el.className = 'toast toast-' + type;
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(function() { el.remove(); }, 3000);
+}
+
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s) { return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function utf8ToBase64(str) {
+  var utf8 = new TextEncoder().encode(str);
+  var bin = '';
+  for (var i = 0; i < utf8.length; i++) bin += String.fromCharCode(utf8[i]);
+  return btoa(bin);
+}
+</script>
+</body>
+</html>
