@@ -207,19 +207,21 @@ const server = http.createServer(async (req, res) => {
       }
 
       case 'lrc': {
-        const d = await fetchJSON(`https://music.163.com/api/song/lyric?id=${id}&lv=1&kv=1&tv=-1`)
-        if (d.code === 200) {
-          const lrc = [d.lrc?.lyric, d.tlyric?.lyric].filter(Boolean).join('\n')
-          if (lrc) {
-            res.writeHead(200, {
-              'Content-Type': 'text/plain; charset=utf-8',
-              'Cache-Control': 'public, max-age=3600'
-            })
-            return res.end(lrc)
+        let lrc = ''
+        try {
+          const d = await fetchJSON(`https://music.163.com/api/song/lyric?id=${id}&lv=1&kv=1&tv=-1`)
+          if (d.code === 200) {
+            lrc = [d.lrc?.lyric, d.tlyric?.lyric].filter(Boolean).join('\n')
           }
-        }
-        res.writeHead(404)
-        return res.end('No lyrics')
+        } catch (_) { /* 歌词接口异常，按无歌词处理 */ }
+        // 无歌词时也返回 200 + 占位，避免 APlayer 收到 404 后
+        // 在歌词区一直显示 "Not available"
+        if (!lrc) lrc = '[00:00.00]暂无歌词'
+        res.writeHead(200, {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'public, max-age=3600'
+        })
+        return res.end(lrc)
       }
 
       default:
