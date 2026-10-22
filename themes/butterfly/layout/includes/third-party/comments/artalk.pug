@@ -28,10 +28,7 @@ script.
 
       if (GLOBAL_CONFIG.lightbox === 'null') return
       artalkItem.on('list-loaded', () => {
-        artalkItem.ctx.get('list').getCommentNodes().forEach(comment => {
-          const $content = comment.getRender().$content
-          btf.loadLightbox($content.querySelectorAll('img:not([atk-emoticon])'))
-        })
+        btf.loadLightbox(el.querySelectorAll('#artalk-wrap .atk-content img:not([atk-emoticon])'))
       })
 
       if (isShuoshuo) {

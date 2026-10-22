@@ -1,0 +1,11 @@
+services:
+  artalk:
+    image: artalk/artalk-go:2.10.0
+    container_name: artalk
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:23366:23366"
+    volumes:
+      - ./data:/data

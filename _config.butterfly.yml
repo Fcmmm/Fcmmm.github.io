@@ -329,7 +329,8 @@ share:
 
 # Comments System
 comments:
-  use: Giscus
+  # Artalk is the default. Giscus remains available for older GitHub Discussions.
+  use: Artalk,Giscus
   text: true
   lazyload: false
   count: true
@@ -343,6 +344,13 @@ giscus:
   category_id:  "DIC_kwDOSqHvlM4C-AMX"
   light_theme: light
   dark_theme: dark
+  option:
+
+# Artalk is served from the Aliyun host. The site name must match ATK_SITE_DEFAULT.
+artalk:
+  server: https://comments.fcmmm.xyz
+  site: Fcmmm Blog
+  visitor: false
   option:
 
 # Chat Services
@@ -532,3 +540,6 @@ CDN:
   version: true
   custom_format:
   option:
+    # Load the client bundled with the Artalk server, keeping both versions in sync.
+    artalk_css: https://comments.fcmmm.xyz/dist/Artalk.css
+    artalk_js: https://comments.fcmmm.xyz/dist/Artalk.js

@@ -363,11 +363,11 @@ menu:
 | 5 | 信息覆盖在封面上 |
 | 6 | 瀑布流布局 |
 
-### 8. Giscus 评论管理
+### 8. 评论管理
 
-- 所有评论存在 `https://github.com/Fcmmm/Fcmmm.github.io/discussions`
-- 你能直接在 Discussions 里删除/锁定不当评论
-- 新评论 GitHub 会发邮件提醒
+- 新评论使用 Artalk，访客填写昵称和邮箱即可评论；管理员在评论区的「控制中心」审核、回复。
+- 旧评论仍可通过评论区的 Giscus 切换按钮查看，保存在 `https://github.com/Fcmmm/Fcmmm.github.io/discussions`。
+- Artalk 的阿里云部署、邮箱通知、上线顺序和回退步骤见 [Artalk 部署手册](deploy/artalk/README.md)。
 
 ---
 
