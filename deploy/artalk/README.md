@@ -5,7 +5,6 @@
 ## 1. 上线前准备
 
 - 阿里云服务器需安装 Docker 和 Docker Compose。若终端显示 `docker: command not found`，先在宝塔左侧点击「Docker」并按提示安装 Docker；若看不到该入口，在「软件商店」搜索并安装 Docker 管理器。安装完成后，在服务器终端确认 `docker --version` 和 `docker compose version` 均可运行。
-- 在域名解析后台为 `fcmmm.xyz` 新增 A 记录：主机记录填 `comments`，记录值填当前博客阿里云服务器的公网 IP，TTL 保持默认。
 - 准备一个可通过 SMTP 发信的邮箱，开启 SMTP，并取得**授权码**。不要把邮箱登录密码或授权码提交到 Git。
 - 确认服务器允许出站连接邮箱服务商的 SMTP 端口；反向代理使用已有的 80/443 端口，Artalk 的 23366 端口只监听本机。
 
@@ -35,28 +34,19 @@ docker compose exec artalk artalk admin
 
 最后一条命令按提示创建管理员账户。评论数据存储在 `/opt/artalk/data/artalk.db`。`.env` 与 `data/` 已被本目录的 `.gitignore` 排除，不应提交到仓库。
 
-## 3. 配置域名和 HTTPS
+## 3. 在现有网站配置中添加评论代理
 
-在宝塔「网站」中添加域名为 `comments.fcmmm.xyz` 的站点；进入该站点的「设置 → SSL」申请并启用 HTTPS 证书，再到「设置 → 反向代理」添加代理：
-
-```text
-代理目标：http://127.0.0.1:23366
-发送域名：comments.fcmmm.xyz
-```
-
-如果新建的是「HTML 网站」且没有「反向代理」选项，先确认 Web 服务为 Nginx，然后打开 **`comments.fcmmm.xyz` 站点**的「设置 → 配置文件」。在现有的 `server { ... }` 内，将原来的 `location / { ... }` 整段替换为下面两段；如果没有 `location /`，就在 `server` 内添加。不要修改主博客 `fcmmm.xyz` 的配置，也不要额外套一层 `server {}`：
+只使用宝塔现有的 `fcmmm.xyz` 网站，不需要新建 `comments.fcmmm.xyz`、添加 DNS 记录或申请新证书。打开「网站 → fcmmm.xyz → 设置 → 配置文件」，在已有的 `server { ... }` 内，建议放在 `# 主站：fcmmm.xyz/` 和原有 `location / { ... }` **之前**，加入下面两段。原有 `location /` 必须保留：
 
 ```nginx
-location ^~ /dist/ {
-    proxy_pass http://127.0.0.1:23366;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
+# Artalk 评论服务
+location = /api/comments {
+    return 301 /api/comments/;
 }
 
-location / {
-    proxy_pass http://127.0.0.1:23366;
+location ^~ /api/comments/ {
+    proxy_pass http://127.0.0.1:23366/;
+    proxy_http_version 1.1;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -64,20 +54,20 @@ location / {
 }
 ```
 
-`/dist/` 单独匹配，避免 HTML 站点原有的 JS/CSS 静态文件规则抢先处理 Artalk 资源。保存后在宝塔重载 Nginx。若配置文件以 `<VirtualHost` 开头，说明使用的是 Apache，不要粘贴上述 Nginx 配置。
-
-确认 `https://comments.fcmmm.xyz/` 能打开 Artalk 页面，且下面两个资源能正常访问：
+`^~` 确保 Artalk 的 JS/CSS 请求不会被此网站已有的静态资源正则规则截走；`proxy_pass` 末尾的 `/` 会去掉对外路径 `/api/comments/`，再交给 Artalk。宝塔保存配置并重载 Nginx 后，检查：
 
 ```text
-https://comments.fcmmm.xyz/dist/Artalk.js
-https://comments.fcmmm.xyz/dist/Artalk.css
+https://fcmmm.xyz/api/comments/dist/Artalk.js
+https://fcmmm.xyz/api/comments/dist/Artalk.css
 ```
+
+两个地址应显示资源内容，而不是博客首页或 404。若是 502，先在服务器终端执行 `cd /opt/artalk && docker compose ps`，确认 Artalk 容器已经运行。
 
 若博客在 `fcmmm.xyz`、`www.fcmmm.xyz` 和 GitHub Pages 域名之间切换，`.env` 中的 `ATK_TRUSTED_DOMAINS` 已列出这三个来源。以后新增博客域名时也要更新这一项并重建容器。
 
 ## 4. 上线前检查
 
-进入 Artalk 管理界面的「控制中心」检查邮件设置，并开启管理员的新评论邮件通知。此时只需确认服务页面和静态资源能打开；完整的评论与邮件测试在前端发布后进行。
+博客前端发布后，从评论框登录管理员并进入「控制中心」检查邮件设置，开启管理员的新评论邮件通知。完整的评论与邮件测试在前端发布后进行。
 
 初始配置为**新评论先审核**；验证码仅在一分钟内连续操作达到阈值后出现。这样访客首次评论只需填写昵称和邮箱，管理员可在控制中心审核。运行稳定后，如希望评论即时显示，可将 `.env` 的 `ATK_MODERATOR_PENDING_DEFAULT` 改成 `false`，再执行 `docker compose up -d --force-recreate`。
 
@@ -97,7 +87,7 @@ git push origin source
 1. 默认出现 Artalk 评论框；用普通访客视角提交一条评论，确认进入待审列表。
 2. 用自己的邮箱 A 留言，使用管理员账户审核并回复，确认 A 收到回复邮件；再确认管理员收到新评论邮件，邮件中的链接能跳到原文章。
 3. 切换到 Giscus，确认旧 GitHub Discussions 仍可查看。
-4. 用手机网络测试 `comments.fcmmm.xyz` 和评论框是否加载。
+4. 用手机网络测试 `fcmmm.xyz/api/comments/dist/Artalk.js` 和评论框是否加载。
 
 如果 Git 推送提示无法连接 `127.0.0.1:7890`，先启动你平时使用的本地代理，再重试；这表示本机 Git 当前设置的代理没有运行，与 Artalk 部署无关。
 

@@ -346,9 +346,9 @@ giscus:
   dark_theme: dark
   option:
 
-# Artalk is served from the Aliyun host. The site name must match ATK_SITE_DEFAULT.
+# Artalk is reverse-proxied through the existing fcmmm.xyz Nginx site.
 artalk:
-  server: https://comments.fcmmm.xyz
+  server: https://fcmmm.xyz/api/comments
   site: Fcmmm Blog
   visitor: false
   option:
@@ -541,5 +541,5 @@ CDN:
   custom_format:
   option:
     # Load the client bundled with the Artalk server, keeping both versions in sync.
-    artalk_css: https://comments.fcmmm.xyz/dist/Artalk.css
-    artalk_js: https://comments.fcmmm.xyz/dist/Artalk.js
+    artalk_css: https://fcmmm.xyz/api/comments/dist/Artalk.css
+    artalk_js: https://fcmmm.xyz/api/comments/dist/Artalk.js
