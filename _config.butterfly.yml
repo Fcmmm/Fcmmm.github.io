@@ -543,3 +543,5 @@ CDN:
     # Load the client bundled with the Artalk server, keeping both versions in sync.
     artalk_css: https://fcmmm.xyz/api/comments/dist/Artalk.css
     artalk_js: https://fcmmm.xyz/api/comments/dist/Artalk.js
+    fancybox: https://unpkg.com/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.umd.js
+    fancybox_css: https://unpkg.com/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.css

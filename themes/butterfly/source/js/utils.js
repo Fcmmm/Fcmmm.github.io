@@ -189,6 +189,8 @@
       }
 
       if (service === 'fancybox') {
+        if (!ele.length) return
+
         Array.from(ele).forEach(i => {
           if (i.parentNode.tagName !== 'A') {
             const dataSrc = i.dataset.lazySrc || i.src
@@ -197,8 +199,8 @@
           }
         })
 
-        if (!window.fancyboxRun) {
-          Fancybox.bind('[data-fancybox]', {
+        if (!window.fancyboxRun && window.Fancybox && typeof window.Fancybox.bind === 'function') {
+          window.Fancybox.bind('[data-fancybox]', {
             Hash: false,
             Thumbs: {
               showOnStart: false
