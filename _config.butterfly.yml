@@ -283,10 +283,29 @@ wordcount:
   min2read: true
   total_wordcount: true
 
+# 原不蒜子公共统计已停用（其接口长期 502/超时），改为自建 Umami。
+# 部署步骤见 deploy/umami/README.md。
+umami_analytics:
+  # 按 deploy/umami/README.md 部署完成并填入下面三项后，改为 true 再发布。
+  enable: true
+  # 使用相对路径，与博客同源，避免跨域预检；由 Nginx 反代到 Umami。
+  serverURL: /api/umami
+  # 需与服务器 .env 的 TRACKER_SCRIPT_NAME 一致。
+  script_name: metrics.js
+  # Umami 后台：网站 → 设置 → 跟踪代码中的 data-website-id。
+  website_id: 34a01e9-b05a-4527-8371-55d6fe5e96f9
+  option:
+  UV_PV:
+    site_uv: true
+    site_pv: true
+    page_pv: true
+    # Umami 后台：设置 → API keys 生成的密钥。
+    token: mami_RrWp8lxTe4PylNmKK7Gwi839u8jwxhyB
+
 busuanzi:
-  site_uv: true
-  site_pv: true
-  page_pv: true
+  site_uv: false
+  site_pv: false
+  page_pv: false
 
 # Math
 math:
@@ -532,6 +551,8 @@ inject:
     - <link rel="stylesheet" href="/css/custom.css">
   bottom:
     # - <script src="/js/custom.js"></script>
+    # 统计接口长时间无响应时，把转圈占位替换为 “—”，避免一直转圈。
+    - <script src="/js/stat-fallback.js"></script>
 
 # CDN Settings
 CDN:

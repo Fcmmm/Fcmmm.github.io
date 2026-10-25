@@ -208,7 +208,8 @@ npx hexo new page "页面名称"
 - `preloader` — 加载进度条
 - `darkmode` — 深色模式
 - `wordcount` — 字数统计
-- `busuanzi` — 访客统计
+- `umami_analytics` — 访客统计（自建 Umami）
+- `busuanzi` — 旧访客统计，已停用
 - `pjax` — 页面无刷新切换
 
 **修改社交链接** → `_config.butterfly.yml` 第 37-42 行
@@ -368,6 +369,7 @@ menu:
 - 新评论使用 Artalk，访客填写昵称和邮箱即可评论；管理员在评论区的「控制中心」审核、回复。
 - 旧评论仍可通过评论区的 Giscus 切换按钮查看，保存在 `https://github.com/Fcmmm/Fcmmm.github.io/discussions`。
 - Artalk 的阿里云部署、邮箱通知、上线顺序和回退步骤见 [Artalk 部署手册](deploy/artalk/README.md)。
+- 访客量和文章浏览量使用自建 Umami，部署与配置见 [Umami 部署手册](deploy/umami/README.md)。
 
 ---
 

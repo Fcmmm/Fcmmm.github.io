@@ -1,7 +1,8 @@
-- let { serverURL, website_id, option, UV_PV } = theme.umami_analytics
+- let { serverURL, script_name, website_id, option, UV_PV } = theme.umami_analytics
 - const isServerURL = !!serverURL
 - const baseURL = serverURL ? serverURL.replace(/\/$/, '') : 'https://cloud.umami.is'
 - const apiUrl = serverURL ? serverURL.replace(/\/$/, '') + '/api' : 'https://api.umami.is/v1'
+- const trackerScript = script_name || 'script.js'
 
 script.
   (() => {
@@ -9,51 +10,93 @@ script.
     const config = !{JSON.stringify(UV_PV)}
 
     const runTrack = () => {
-      umami.track(props => ({ ...props, url: window.location.pathname, title: GLOBAL_CONFIG_SITE.title }))
+      if (typeof umami !== 'undefined' && typeof umami.track === 'function') {
+        umami.track(props => ({ ...props, url: window.location.pathname, title: GLOBAL_CONFIG_SITE.title }))
+      }
     }
 
     const loadUmamiJS = () => {
-      btf.getScript('!{baseURL}/script.js', {
+      btf.getScript('!{baseURL}/!{trackerScript}', {
         'data-website-id': '!{website_id}',
         'data-auto-track': 'false',
         ...option
-      }).then(runTrack)
+      }).then(runTrack).catch(error => {
+        console.error('Umami Analytics: Error loading script', error)
+      })
     }
+
+    // Umami v2 returns { value, change }; v3 returns a plain number.
+    const extractValue = stat => (stat && typeof stat.value !== 'undefined') ? stat.value : stat
 
     const getData = async (isPost) => {
       const now = Date.now()
-      const keyUrl = isPost ? `&url=${window.location.pathname}` : ''
-      const headerList = { 'Accept': 'application/json' }
-      if (!{isServerURL}) headerList['Authorization'] = `Bearer ${config.token}`
-      else headerList['x-umami-api-key'] = config.token
-      const res = await fetch(`!{apiUrl}/websites/!{website_id}/stats?startAt=0000000000&endAt=${now}${keyUrl}`, {
-        method: "GET",
-        headers: headerList
-      })
-      return await res.json()
+      // v2 uses `url`, v3 uses `path`; unknown query params are ignored by both.
+      const pathQuery = isPost ? `&url=${encodeURIComponent(window.location.pathname)}&path=${encodeURIComponent(window.location.pathname)}` : ''
+      const controller = new AbortController()
+      const timer = setTimeout(() => controller.abort(), 8000)
+
+      try {
+        const res = await fetch(`!{apiUrl}/websites/!{website_id}/stats?startAt=0000000000&endAt=${now}${pathQuery}`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            // Umami v3 only accepts API keys via the Authorization header.
+            'Authorization': `Bearer ${config.token}`
+          },
+          signal: controller.signal
+        })
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`)
+        }
+
+        return await res.json()
+      } catch (error) {
+        console.error('Umami Analytics: Failed to fetch data', error)
+        throw error
+      } finally {
+        clearTimeout(timer)
+      }
     }
 
     const insertData = async () => {
       try {
+        const tasks = []
+
         if (GLOBAL_CONFIG_SITE.pageType === 'post' && config.page_pv) {
-          const pagePV = document.getElementById('umamiPV')
-          if (pagePV) {
+          tasks.push((async () => {
+            const pagePV = document.getElementById('umamiPV')
+            if (!pagePV) return
             const data = await getData(true)
-            pagePV.textContent = data.pageviews.value
-          }
-        } else {
-          const data = (config.site_uv || config.site_pv) && await getData()
-          if (config.site_uv) {
-            const siteUV = document.getElementById('umami-site-uv')
-            if (siteUV) siteUV.textContent = data.visitors.value
-          }
-          if (config.site_pv) {
-            const sitePV = document.getElementById('umami-site-pv')
-            if (sitePV) sitePV.textContent = data.pageviews.value
-          }
+            if (data && data.pageviews != null) {
+              pagePV.textContent = extractValue(data.pageviews)
+            }
+          })())
         }
-      } catch (e) {
-        console.error('Failed to load Umami Analytics:', e)
+
+        if (config.site_uv || config.site_pv) {
+          tasks.push((async () => {
+            const data = await getData(false)
+
+            if (config.site_uv) {
+              const siteUV = document.getElementById('umami-site-uv')
+              if (siteUV && data && data.visitors != null) {
+                siteUV.textContent = extractValue(data.visitors)
+              }
+            }
+
+            if (config.site_pv) {
+              const sitePV = document.getElementById('umami-site-pv')
+              if (sitePV && data && data.pageviews != null) {
+                sitePV.textContent = extractValue(data.pageviews)
+              }
+            }
+          })())
+        }
+
+        await Promise.all(tasks)
+      } catch (error) {
+        console.error('Umami Analytics: Failed to insert data', error)
       }
     }
 
@@ -61,5 +104,10 @@ script.
     btf.addGlobalFn('pjaxComplete', insertData, 'umami_analytics_insert')
 
     loadUmamiJS()
-    insertData()
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', insertData)
+    } else {
+      setTimeout(insertData, 100)
+    }
   })()
