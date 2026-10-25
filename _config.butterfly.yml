@@ -286,7 +286,7 @@ wordcount:
 # 原不蒜子公共统计已停用（其接口长期 502/超时），改为自建 Umami。
 # 部署步骤见 deploy/umami/README.md。
 umami_analytics:
-  # 按 deploy/umami/README.md 部署完成并填入下面三项后，改为 true 再发布。
+  # 按 deploy/umami/README.md 部署完成后再改为 true 发布。
   enable: true
   # 使用相对路径，与博客同源，避免跨域预检；由 Nginx 反代到 Umami。
   serverURL: /api/umami
@@ -299,8 +299,8 @@ umami_analytics:
     site_uv: true
     site_pv: true
     page_pv: true
-    # Umami 后台：设置 → API keys 生成的密钥。
-    token: umami_RrWp8lxTe4PylNmKK7Gwi839u8jwxhyB
+    # API key 由服务器 Nginx 在统计接口上注入，不要写进这里：
+    # 本文件会被构建到公开页面，密钥会随源码泄露。
 
 busuanzi:
   site_uv: false

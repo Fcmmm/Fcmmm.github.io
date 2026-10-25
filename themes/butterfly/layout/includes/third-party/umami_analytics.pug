@@ -36,12 +36,11 @@ script.
       const timer = setTimeout(() => controller.abort(), 8000)
 
       try {
+        // 统计接口由 Nginx 在服务端注入 API key，前端不发送任何密钥。
         const res = await fetch(`!{apiUrl}/websites/!{website_id}/stats?startAt=0000000000&endAt=${now}${pathQuery}`, {
           method: 'GET',
           headers: {
-            'Accept': 'application/json',
-            // Umami v3 only accepts API keys via the Authorization header.
-            'Authorization': `Bearer ${config.token}`
+            'Accept': 'application/json'
           },
           signal: controller.signal
         })

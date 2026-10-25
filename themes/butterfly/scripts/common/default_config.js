@@ -411,8 +411,7 @@ module.exports = {
     UV_PV: {
       site_uv: false,
       site_pv: false,
-      page_pv: false,
-      token: null
+      page_pv: false
     }
   },
   google_adsense: {

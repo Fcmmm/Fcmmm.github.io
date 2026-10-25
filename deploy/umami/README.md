@@ -8,7 +8,7 @@
 浏览器
   ├─ /api/umami/metrics.js               → fcmmm.xyz 的 Nginx → 127.0.0.1:3000/metrics.js
   ├─ /api/umami/api/send                 → 记录访问
-  ├─ /api/umami/api/websites/<id>/stats  → 侧栏 UV / PV
+  ├─ /api/umami/api/websites/<id>/stats  → Nginx 在服务端注入 API key → 侧栏 UV / PV
   └─ https://stats.fcmmm.xyz/            → 管理后台
 
 Umami → PostgreSQL（数据目录 /opt/umami/data）
@@ -17,7 +17,7 @@ Umami → PostgreSQL（数据目录 /opt/umami/data）
 两个关键设计：
 
 - **管理后台用独立子域名** `stats.fcmmm.xyz`。Umami 基于 Next.js，静态资源按根路径加载，官方镜像不支持子路径部署；放在 `/api/umami/` 下管理界面会白屏。
-- **博客用的脚本和统计接口反代到主站 `/api/umami/`**。这样脚本、统计请求和 API 都与博客同源，不触发跨域预检（统计接口要带 `Authorization` 头，跨域容易失败），也不会被广告拦截器按第三方统计域名屏蔽。
+- **博客用的脚本和统计接口反代到主站 `/api/umami/`**。这样脚本和统计请求都与博客同源，不触发跨域问题，也不会被广告拦截器按第三方统计域名屏蔽；统计接口的 API key 由 Nginx 在服务端注入，浏览器不需要携带密钥。
 
 ## 1. 准备工作
 
@@ -101,7 +101,7 @@ ssh -L 3000:127.0.0.1:3000 你的服务器用户@服务器IP
 打开「网站 → fcmmm.xyz → 设置 → 配置文件」，在已有的 `server { ... }` 内、原有 `location / { ... }` **之前**加入：
 
 ```nginx
-# Umami 统计脚本与 API（反代到本机 Umami）
+# Umami 统计脚本与上报接口（不需要 API key）
 location ^~ /api/umami/ {
     proxy_pass http://127.0.0.1:3000/;
     proxy_http_version 1.1;
@@ -110,12 +110,26 @@ location ^~ /api/umami/ {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
 }
+
+# 只读统计接口：Nginx 在服务端注入 API key，密钥不会下发到浏览器
+location = /api/umami/api/websites/你的WEBSITE_ID/stats {
+    limit_except GET { deny all; }
+    proxy_pass http://127.0.0.1:3000/api/websites/你的WEBSITE_ID/stats;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Authorization "Bearer 你的API_KEY";
+}
 ```
 
 说明：
 
-- `^~` 确保 `/api/umami/metrics.js` 不会被主站已有的静态资源正则规则截走（与 Artalk 的 `/api/comments/` 同理）。
-- `proxy_pass` 末尾的 `/` **必须有**：它会把 `/api/umami/` 前缀去掉，Umami 收到的路径是 `/metrics.js`、`/api/send`、`/api/websites/...`。少了这个 `/` 会 404。
+- 第一个 `^~ /api/umami/` 负责 `metrics.js` 和 `api/send`，不会注入密钥。`^~` 确保它不会被主站已有的静态资源正则规则截走（与 Artalk 的 `/api/comments/` 同理）；`proxy_pass` 末尾的 `/` **必须有**，否则会 404。
+- 第二个 `location =` 只匹配统计接口，优先级最高，查询参数会原样转发。`limit_except GET` 拒绝 POST/PUT/DELETE，避免有人借这个代理做写操作。
+- `Authorization` 里的 `Bearer` 和后面的空格都要保留，只把 `你的API_KEY` 换成完整密钥；这个 key **只放在 Nginx**，不要写进博客配置或提交到 Git。
+- 如果 `www.fcmmm.xyz` 有独立的 `server` 块，两段都要加一遍。
 - 原有 `location / { ... }` 保留不动。
 
 保存并重载 Nginx。
@@ -127,20 +141,20 @@ location ^~ /api/umami/ {
 1. 默认账号 `admin` / 密码 `umami`，登录后**立即修改密码**。
 2. 添加网站：名称填 `Fcmmm Blog`，域名填 `fcmmm.xyz`。
 3. 进入该网站的 **设置 → 跟踪代码**，复制 `data-website-id` 的值（形如 `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`）。
-4. 生成 API key：点击右上角头像 → **Settings**，在左侧菜单的 **Settings** 分组里选 **API keys**（也可以直接打开 `https://stats.fcmmm.xyz/settings/api-keys`）。点右上角 **Create API key**，填一个名称（如 `blog`）后保存，弹窗会显示完整密钥，点复制按钮拷贝（形如 `umami_...`，关闭后不再完整显示）。
+4. 生成 API key：点击右上角头像 → **Settings**，在左侧菜单的 **Settings** 分组里选 **API keys**（也可以直接打开 `https://stats.fcmmm.xyz/settings/api-keys`）。点右上角 **Create API key**，填一个名称（如 `blog`）后保存，弹窗会显示完整密钥，点复制按钮拷贝（形如 `umami_...`，关闭后不再完整显示）。复制后**只填到服务器 Nginx 的统计接口**（见 3.2），不要填进 `_config.butterfly.yml`。
 
    注意：**API keys 在账户设置里，不在某个网站的设置里**。网站设置里的 `Settings` 只有跟踪代码、分享、删除网站等选项。
 
-API key 会出现在博客页面的源码里（主题需要在前端读取统计数字）。Umami 已禁止 API key 访问改密码、账号、用户管理等接口，但它仍能读取本站统计；不要复用管理员密码，泄露后可在后台删除并重建。
+统计接口的 API key 只保存在服务器 Nginx 配置里，页面源码和 Git 仓库中都不应出现。API key 权限很高：Umami v3 只屏蔽了账号类接口，网站的 reset/delete 仍然可以用 key 调用；一旦泄露，别人可以清空统计或删除网站。泄露后立即在后台删除旧 key，并在 Nginx 里换上新 key。
 
 ## 5. 验证接口
 
-先验证脚本和 API 都走主站代理：
+先验证脚本和统计接口都走主站代理。统计接口**不要带 Authorization 头**，key 由 Nginx 注入：
 
 ```bash
 curl -I https://fcmmm.xyz/api/umami/metrics.js
 
-curl -sS -H "Authorization: Bearer 你的API_KEY" \
+curl -sS \
   "https://fcmmm.xyz/api/umami/api/websites/你的WEBSITE_ID/stats?startAt=0&endAt=$(date +%s000)"
 ```
 
@@ -150,11 +164,23 @@ curl -sS -H "Authorization: Bearer 你的API_KEY" \
 {"pageviews":0,"visitors":0,"visits":0,"bounces":0,"totaltime":0,"comparison":{...}}
 ```
 
-若是 401，检查 API key 是否复制完整；若是 404，检查主站代理 `proxy_pass` 末尾是否有 `/`、容器是否在 `127.0.0.1:3000` 监听。
+若是 401，检查 Nginx 的 `location = .../stats` 是否生效、`Authorization` 是否为 `Bearer 你的API_KEY`（`Bearer` 和后面的空格都要保留）、key 是否已在后台删除；若是 404，检查主站代理 `proxy_pass` 末尾是否有 `/`、容器是否在 `127.0.0.1:3000` 监听。
+
+还可以确认密钥没有从其他路径泄露：
+
+```bash
+# 网站详情接口不应能匿名访问，预期 401
+curl -sS -o /dev/null -w "%{http_code}\n" \
+  "https://fcmmm.xyz/api/umami/api/websites/你的WEBSITE_ID"
+
+# 统计接口只允许 GET，POST 预期 403
+curl -sS -o /dev/null -w "%{http_code}\n" -X POST \
+  "https://fcmmm.xyz/api/umami/api/websites/你的WEBSITE_ID/stats"
+```
 
 ## 6. 配置博客前端
 
-编辑 `_config.butterfly.yml` 的 `umami_analytics` 段，填入上一步的两个值并启用：
+编辑 `_config.butterfly.yml` 的 `umami_analytics` 段，填入 `website_id` 并启用（**不需要填 API key**，统计接口的 key 由 Nginx 注入）：
 
 ```yaml
 umami_analytics:
@@ -167,7 +193,6 @@ umami_analytics:
     site_uv: true
     site_pv: true
     page_pv: true
-    token: umami_你的API_KEY
 ```
 
 `serverURL` 使用相对路径，博客在 `fcmmm.xyz`、`www.fcmmm.xyz` 等下都能同源访问；GitHub Pages 的预览域名没有这个反代，预览时统计不显示属于正常现象。同时确认 `busuanzi` 三项为 `false`（仓库中已改好）。然后在本机构建、提交并推送 `source` 分支，GitHub Actions 会自动发布：
@@ -216,9 +241,9 @@ docker compose up -d
 | `stats.fcmmm.xyz` 502 | `docker compose ps` 是否 healthy；`curl http://127.0.0.1:3000/api/heartbeat` |
 | 管理界面白屏 / 404 | 子域名 Nginx 是否用了 `^~ /`；`proxy_pass` 是否误加了末尾 `/` |
 | `/api/umami/metrics.js` 404 | 主站代理 `proxy_pass` 末尾是否有 `/`；`.env` 的 `TRACKER_SCRIPT_NAME` 与博客的 `script_name` 是否一致 |
-| 接口 401 | API key 是否完整；重建 key 后是否同步更新博客配置 |
+| 接口 401 | Nginx 的 `location = .../stats` 是否生效；`Authorization` 是否为 `Bearer 你的API_KEY`（`Bearer` 和后面的空格都要保留）；key 是否已在后台删除 |
 | 数字一直是 0 | 是否有广告拦截插件拦了 `metrics.js`；Network 里看 `/api/umami/api/send` 是否成功 |
-| 数字 6 秒后变成 — | 统计接口请求失败，见上方 401/404 排查；`source/js/stat-fallback.js` 只是兜底显示 |
+| 数字 6 秒后变成 — | 统计接口请求失败，见上方 401/404 排查；本地预览或 GitHub Pages 预览没有 `/api/umami/` 反代也会这样；`source/js/stat-fallback.js` 只是兜底显示 |
 
 ## 官方参考
 

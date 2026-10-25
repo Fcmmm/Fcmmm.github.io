@@ -693,8 +693,6 @@ umami_analytics:
     site_uv: false
     site_pv: false
     page_pv: false
-    # Umami Cloud (API key) / self-hosted Umami (token)
-    token:
 
 # --------------------------------------
 # Advertisement
