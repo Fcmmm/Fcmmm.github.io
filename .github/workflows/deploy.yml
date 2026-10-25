@@ -22,6 +22,10 @@ jobs:
       - name: Build Hexo
         run: npx hexo generate
 
+      # main 分支是构建产物，GitHub 仓库首页的 README 需要一并发布
+      - name: Copy README for GitHub repository page
+        run: cp README.md public/README.md
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
