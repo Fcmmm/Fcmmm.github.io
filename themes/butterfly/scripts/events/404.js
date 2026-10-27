@@ -12,6 +12,7 @@ hexo.extend.generator.register('404', function (locals) {
     layout: ['page'],
     data: {
       type: '404',
+      title: hexo.theme.config.error_404.subtitle || '404',
       top_img: false,
       comments: false,
       aside: false
